@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+[tool.mypy]
+python_version = "3.11"
+pretty = true
+show_error_codes = true
+strict = true
+ignore_missing_imports = false
+plugins = ["sqlalchemy.ext.mypy.plugin"]
+
+[[tool.mypy.overrides]]
+module = [
+    "flask_login",
+    "flask_login.*",
+    "flask_sqlalchemy",
+    "flask_sqlalchemy.*",
+    "flask_wtf",
+    "flask_wtf.*",
+    "flask_limiter",
+    "flask_limiter.*",
+    "flask_talisman",
+    "flask_talisman.*",
+]
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+extend-select = ["I", "B", "C4", "SIM", "N", "Q"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

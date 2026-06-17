@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>API Reference &#8212; Phone Management Application  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Phone Management Application" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h1>
+<p>Application factory for the phone management backend.</p>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">app.__init__.</span></span><span class="sig-name descname"><span class="pre">create_app</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AppConfig</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Flask</span></span></span></dt>
+<dd><p>Creates and configures the Flask application.</p>
+</dd></dl>
+
+<p id="module-app.models">Domain dataclasses and SQLAlchemy models.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.models.AuditLog">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.</span></span><span class="sig-name descname"><span class="pre">AuditLog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.models.AuditLog" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
+<p>Audit trail tracking important business events.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.AuditLog.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><a class="headerlink" href="#app.models.AuditLog.created_at" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.AuditLog.event_type">
+<span class="sig-name descname"><span class="pre">event_type</span></span><a class="headerlink" href="#app.models.AuditLog.event_type" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.AuditLog.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.AuditLog.id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.AuditLog.message">
+<span class="sig-name descname"><span class="pre">message</span></span><a class="headerlink" href="#app.models.AuditLog.message" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.AuditLog.query">
+<span class="sig-name descname"><span class="pre">query</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">t.ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Query</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.models.AuditLog.query" title="Link to this definition">¶</a></dt>
+<dd><p>A SQLAlchemy query for a model. Equivalent to <code class="docutils literal notranslate"><span class="pre">db.session.query(Model)</span></code>. Can be
+customized per-model by overriding <code class="xref py py-attr docutils literal notranslate"><span class="pre">query_class</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The query interface is considered legacy in SQLAlchemy. Prefer using
+<code class="docutils literal notranslate"><span class="pre">session.execute(select())</span></code> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.AuditLog.username">
+<span class="sig-name descname"><span class="pre">username</span></span><a class="headerlink" href="#app.models.AuditLog.username" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.models.PhoneStatus">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.</span></span><span class="sig-name descname"><span class="pre">PhoneStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names=&lt;not</span> <span class="pre">given&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.models.PhoneStatus" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Enumerates the permitted phone lifecycle statuses.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.PhoneStatus.DISPOSED">
+<span class="sig-name descname"><span class="pre">DISPOSED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'disposed'</span></em><a class="headerlink" href="#app.models.PhoneStatus.DISPOSED" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.PhoneStatus.ONLINE">
+<span class="sig-name descname"><span class="pre">ONLINE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'online'</span></em><a class="headerlink" href="#app.models.PhoneStatus.ONLINE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.PhoneStatus.SOLD">
+<span class="sig-name descname"><span class="pre">SOLD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sold'</span></em><a class="headerlink" href="#app.models.PhoneStatus.SOLD" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.PhoneStatus.STOLEN">
+<span class="sig-name descname"><span class="pre">STOLEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'stolen'</span></em><a class="headerlink" href="#app.models.PhoneStatus.STOLEN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.models.PhoneStatusHistory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.</span></span><span class="sig-name descname"><span class="pre">PhoneStatusHistory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.models.PhoneStatusHistory" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
+<p>Historical phone status entries per user.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.PhoneStatusHistory.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.PhoneStatusHistory.id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.PhoneStatusHistory.noted_at">
+<span class="sig-name descname"><span class="pre">noted_at</span></span><a class="headerlink" href="#app.models.PhoneStatusHistory.noted_at" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.PhoneStatusHistory.query">
+<span class="sig-name descname"><span class="pre">query</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">t.ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Query</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.models.PhoneStatusHistory.query" title="Link to this definition">¶</a></dt>
+<dd><p>A SQLAlchemy query for a model. Equivalent to <code class="docutils literal notranslate"><span class="pre">db.session.query(Model)</span></code>. Can be
+customized per-model by overriding <code class="xref py py-attr docutils literal notranslate"><span class="pre">query_class</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The query interface is considered legacy in SQLAlchemy. Prefer using
+<code class="docutils literal notranslate"><span class="pre">session.execute(select())</span></code> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.PhoneStatusHistory.status">
+<span class="sig-name descname"><span class="pre">status</span></span><a class="headerlink" href="#app.models.PhoneStatusHistory.status" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.PhoneStatusHistory.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><a class="headerlink" href="#app.models.PhoneStatusHistory.user_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.models.PhoneStatusRecord">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.</span></span><span class="sig-name descname"><span class="pre">PhoneStatusRecord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status:</span> <span class="pre">~app.models.PhoneStatus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noted_at:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.models.PhoneStatusRecord" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Dataclass capturing a phone status entry for auditing.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.PhoneStatusRecord.noted_at">
+<span class="sig-name descname"><span class="pre">noted_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span></em><a class="headerlink" href="#app.models.PhoneStatusRecord.noted_at" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.PhoneStatusRecord.status">
+<span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#app.models.PhoneStatus" title="app.models.PhoneStatus"><span class="pre">PhoneStatus</span></a></em><a class="headerlink" href="#app.models.PhoneStatusRecord.status" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.PhoneStatusRecord.username">
+<span class="sig-name descname"><span class="pre">username</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.models.PhoneStatusRecord.username" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.models.Role">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.</span></span><span class="sig-name descname"><span class="pre">Role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names=&lt;not</span> <span class="pre">given&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.models.Role" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Represents the access level of a system user.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.Role.ADMIN">
+<span class="sig-name descname"><span class="pre">ADMIN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'admin'</span></em><a class="headerlink" href="#app.models.Role.ADMIN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.Role.MANAGER">
+<span class="sig-name descname"><span class="pre">MANAGER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'manager'</span></em><a class="headerlink" href="#app.models.Role.MANAGER" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.Role.USER">
+<span class="sig-name descname"><span class="pre">USER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user'</span></em><a class="headerlink" href="#app.models.Role.USER" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.models.User">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.</span></span><span class="sig-name descname"><span class="pre">User</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.models.User" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">UserMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
+<p>Persistent database representation of a user.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.User.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><a class="headerlink" href="#app.models.User.created_at" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.User.email">
+<span class="sig-name descname"><span class="pre">email</span></span><a class="headerlink" href="#app.models.User.email" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.User.email_verification_token">
+<span class="sig-name descname"><span class="pre">email_verification_token</span></span><a class="headerlink" href="#app.models.User.email_verification_token" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.User.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.User.id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.User.imei">
+<span class="sig-name descname"><span class="pre">imei</span></span><a class="headerlink" href="#app.models.User.imei" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.User.is_email_verified">
+<span class="sig-name descname"><span class="pre">is_email_verified</span></span><a class="headerlink" href="#app.models.User.is_email_verified" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.User.password_hash">
+<span class="sig-name descname"><span class="pre">password_hash</span></span><a class="headerlink" href="#app.models.User.password_hash" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.User.phone_number">
+<span class="sig-name descname"><span class="pre">phone_number</span></span><a class="headerlink" href="#app.models.User.phone_number" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.User.query">
+<span class="sig-name descname"><span class="pre">query</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">t.ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Query</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#app.models.User.query" title="Link to this definition">¶</a></dt>
+<dd><p>A SQLAlchemy query for a model. Equivalent to <code class="docutils literal notranslate"><span class="pre">db.session.query(Model)</span></code>. Can be
+customized per-model by overriding <code class="xref py py-attr docutils literal notranslate"><span class="pre">query_class</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The query interface is considered legacy in SQLAlchemy. Prefer using
+<code class="docutils literal notranslate"><span class="pre">session.execute(select())</span></code> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.User.role">
+<span class="sig-name descname"><span class="pre">role</span></span><a class="headerlink" href="#app.models.User.role" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.User.statuses">
+<span class="sig-name descname"><span class="pre">statuses</span></span><a class="headerlink" href="#app.models.User.statuses" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.User.two_factor_secret">
+<span class="sig-name descname"><span class="pre">two_factor_secret</span></span><a class="headerlink" href="#app.models.User.two_factor_secret" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.User.username">
+<span class="sig-name descname"><span class="pre">username</span></span><a class="headerlink" href="#app.models.User.username" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.models.User.validate_username">
+<span class="sig-name descname"><span class="pre">validate_username</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#app.models.User.validate_username" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures usernames adhere to the defined constraints.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.models.UserProfile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.</span></span><span class="sig-name descname"><span class="pre">UserProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phone_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imei</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.models.Role" title="app.models.Role"><span class="pre">Role</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Role.USER</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.models.UserProfile" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Dataclass representing validated user metadata.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.UserProfile.email">
+<span class="sig-name descname"><span class="pre">email</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.models.UserProfile.email" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.UserProfile.imei">
+<span class="sig-name descname"><span class="pre">imei</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.models.UserProfile.imei" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.UserProfile.phone_number">
+<span class="sig-name descname"><span class="pre">phone_number</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.models.UserProfile.phone_number" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.UserProfile.role">
+<span class="sig-name descname"><span class="pre">role</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#app.models.Role" title="app.models.Role"><span class="pre">Role</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user'</span></em><a class="headerlink" href="#app.models.UserProfile.role" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.UserProfile.username">
+<span class="sig-name descname"><span class="pre">username</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.models.UserProfile.username" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<p id="module-app.services.security">Security utilities including password hashing and 2FA.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="app.services.security.HashingError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.security.</span></span><span class="sig-name descname"><span class="pre">HashingError</span></span><a class="headerlink" href="#app.services.security.HashingError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raised when password hashing or verification fails.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="app.services.security.PasswordComplexityError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.security.</span></span><span class="sig-name descname"><span class="pre">PasswordComplexityError</span></span><a class="headerlink" href="#app.services.security.PasswordComplexityError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raised when a password does not meet complexity requirements.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.services.security.PasswordHasherProtocol">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.security.</span></span><span class="sig-name descname"><span class="pre">PasswordHasherProtocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.security.PasswordHasherProtocol" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Protocol</span></code></p>
+<p>Protocol describing the password hasher interface.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.security.PasswordHasherProtocol.hash">
+<span class="sig-name descname"><span class="pre">hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#app.services.security.PasswordHasherProtocol.hash" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.security.PasswordHasherProtocol.verify">
+<span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hash</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#app.services.security.PasswordHasherProtocol.verify" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.services.security.SecurityService">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.security.</span></span><span class="sig-name descname"><span class="pre">SecurityService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hasher</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.services.security.PasswordHasherProtocol" title="app.services.security.PasswordHasherProtocol"><span class="pre">PasswordHasherProtocol</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.security.SecurityService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Provides password hashing, complexity validation, and 2FA utilities.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.security.SecurityService.generate_two_factor_secret">
+<span class="sig-name descname"><span class="pre">generate_two_factor_secret</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#app.services.security.SecurityService.generate_two_factor_secret" title="Link to this definition">¶</a></dt>
+<dd><p>Generates a random secret for TOTP-based 2FA.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Base32-encoded random secret for TOTP.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.security.SecurityService.hash_password">
+<span class="sig-name descname"><span class="pre">hash_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#app.services.security.SecurityService.hash_password" title="Link to this definition">¶</a></dt>
+<dd><p>Hashes the provided password using Argon2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>password</strong> (<em>str</em>) – Password to hash. Must meet complexity requirements.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Argon2 password hash.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#app.services.security.PasswordComplexityError" title="app.services.security.PasswordComplexityError"><strong>PasswordComplexityError</strong></a> – If password does not meet complexity requirements.</p></li>
+<li><p><a class="reference internal" href="#app.services.security.HashingError" title="app.services.security.HashingError"><strong>HashingError</strong></a> – If password hashing fails.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.security.SecurityService.validate_password_complexity">
+<span class="sig-name descname"><span class="pre">validate_password_complexity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#app.services.security.SecurityService.validate_password_complexity" title="Link to this definition">¶</a></dt>
+<dd><p>Validates that a password meets complexity requirements.</p>
+<p>Password must contain:
+- At least 8 characters (max 128)
+- At least one lowercase letter
+- At least one uppercase letter
+- At least one digit
+- At least one special character (&#64;$!%*?&amp;)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>password</strong> (<em>str</em>) – Password to validate.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#app.services.security.PasswordComplexityError" title="app.services.security.PasswordComplexityError"><strong>PasswordComplexityError</strong></a> – If password does not meet requirements.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.security.SecurityService.verify_password">
+<span class="sig-name descname"><span class="pre">verify_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hash_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#app.services.security.SecurityService.verify_password" title="Link to this definition">¶</a></dt>
+<dd><p>Verifies the given password against the stored hash.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hash_value</strong> (<em>str</em>) – Stored password hash.</p></li>
+<li><p><strong>password</strong> (<em>str</em>) – Password to verify.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if password matches hash, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#app.services.security.HashingError" title="app.services.security.HashingError"><strong>HashingError</strong></a> – If password verification fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-app.services.auth">Authentication and authorization service layer.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="app.services.auth.AccountLockedError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.auth.</span></span><span class="sig-name descname"><span class="pre">AccountLockedError</span></span><a class="headerlink" href="#app.services.auth.AccountLockedError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#app.services.auth.AuthError" title="app.services.auth.AuthError"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthError</span></code></a></p>
+<p>Raised when a user account is locked due to security policy.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="app.services.auth.AuthError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.auth.</span></span><span class="sig-name descname"><span class="pre">AuthError</span></span><a class="headerlink" href="#app.services.auth.AuthError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raised when authentication operations fail.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.services.auth.AuthService">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.auth.</span></span><span class="sig-name descname"><span class="pre">AuthService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">security_service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.services.security.SecurityService" title="app.services.security.SecurityService"><span class="pre">SecurityService</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">audit_service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.services.auditing.SecurityAuditService" title="app.services.auditing.SecurityAuditService"><span class="pre">SecurityAuditService</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.auth.AuthService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Handles registration, login, and authorization logic with security auditing.</p>
+<p>This service enforces account lockout policies after repeated failed login
+attempts and logs all authentication-related security events.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.auth.AuthService.authenticate">
+<span class="sig-name descname"><span class="pre">authenticate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#app.models.User" title="app.models.User"><span class="pre">User</span></a></span></span><a class="headerlink" href="#app.services.auth.AuthService.authenticate" title="Link to this definition">¶</a></dt>
+<dd><p>Authenticates a user by verifying their credentials.</p>
+<p>Enforces account lockout after repeated failed attempts and logs
+all authentication events for audit trail.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> (<em>str</em>) – Username to authenticate.</p></li>
+<li><p><strong>password</strong> (<em>str</em>) – Password to verify.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Authenticated user object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#app.models.User" title="app.models.User">User</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#app.services.auth.AccountLockedError" title="app.services.auth.AccountLockedError"><strong>AccountLockedError</strong></a> – If account is locked.</p></li>
+<li><p><a class="reference internal" href="#app.services.auth.AuthError" title="app.services.auth.AuthError"><strong>AuthError</strong></a> – If authentication fails.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.auth.AuthService.load_user_by_id">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_user_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#app.models.User" title="app.models.User"><span class="pre">User</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#app.services.auth.AuthService.load_user_by_id" title="Link to this definition">¶</a></dt>
+<dd><p>Loads a user for Flask-Login by identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user_id</strong> (<em>str</em>) – User ID to load.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>User object if found, None otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#app.models.User" title="app.models.User">User</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.auth.AuthService.register_user">
+<span class="sig-name descname"><span class="pre">register_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phone_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imei</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.models.Role" title="app.models.Role"><span class="pre">Role</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Role.USER</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#app.models.User" title="app.models.User"><span class="pre">User</span></a></span></span><a class="headerlink" href="#app.services.auth.AuthService.register_user" title="Link to this definition">¶</a></dt>
+<dd><p>Registers a new user with validated profile data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> (<em>str</em>) – Desired username.</p></li>
+<li><p><strong>email</strong> (<em>str</em>) – User email address.</p></li>
+<li><p><strong>phone_number</strong> (<em>str</em>) – User phone number.</p></li>
+<li><p><strong>imei</strong> (<em>str</em>) – Device IMEI.</p></li>
+<li><p><strong>password</strong> (<em>str</em>) – User password (must meet complexity requirements).</p></li>
+<li><p><strong>role</strong> (<a class="reference internal" href="#app.models.Role" title="app.models.Role"><em>Role</em></a>) – Initial user role. Defaults to Role.USER.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Newly registered user object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#app.models.User" title="app.models.User">User</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#app.services.auth.AuthError" title="app.services.auth.AuthError"><strong>AuthError</strong></a> – If registration fails (duplicate username/email).</p></li>
+<li><p><a class="reference internal" href="#app.services.security.PasswordComplexityError" title="app.services.security.PasswordComplexityError"><strong>PasswordComplexityError</strong></a> – If password does not meet requirements.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.auth.AuthService.require_roles">
+<span class="sig-name descname"><span class="pre">require_roles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UserMixin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_roles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#app.models.Role" title="app.models.Role"><span class="pre">Role</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#app.services.auth.AuthService.require_roles" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures the current user possesses one of the allowed roles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user</strong> (<em>UserMixin</em>) – User to check.</p></li>
+<li><p><strong>allowed_roles</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="#app.models.Role" title="app.models.Role"><em>Role</em></a><em>]</em>) – Roles that are permitted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#app.services.auth.AuthorizationError" title="app.services.auth.AuthorizationError"><strong>AuthorizationError</strong></a> – If user does not have required role.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.auth.AuthService.verify_totp">
+<span class="sig-name descname"><span class="pre">verify_totp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.models.User" title="app.models.User"><span class="pre">User</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#app.services.auth.AuthService.verify_totp" title="Link to this definition">¶</a></dt>
+<dd><p>Verifies the provided TOTP token using the stored secret.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user</strong> (<a class="reference internal" href="#app.models.User" title="app.models.User"><em>User</em></a>) – User object with 2FA secret.</p></li>
+<li><p><strong>token</strong> (<em>str</em>) – TOTP token to verify.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if token is valid, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="app.services.auth.AuthorizationError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.auth.</span></span><span class="sig-name descname"><span class="pre">AuthorizationError</span></span><a class="headerlink" href="#app.services.auth.AuthorizationError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raised when authorization checks fail.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.services.auth.PhoneStatusService">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.auth.</span></span><span class="sig-name descname"><span class="pre">PhoneStatusService</span></span><a class="headerlink" href="#app.services.auth.PhoneStatusService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Manages phone status transitions and audit logging.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.auth.PhoneStatusService.log_status">
+<span class="sig-name descname"><span class="pre">log_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.models.User" title="app.models.User"><span class="pre">User</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.models.PhoneStatus" title="app.models.PhoneStatus"><span class="pre">PhoneStatus</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#app.services.auth.PhoneStatusService.log_status" title="Link to this definition">¶</a></dt>
+<dd><p>Appends a phone status history entry for the given user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user</strong> (<a class="reference internal" href="#app.models.User" title="app.models.User"><em>User</em></a>) – User for whom the status is being logged.</p></li>
+<li><p><strong>status</strong> (<a class="reference internal" href="#app.models.PhoneStatus" title="app.models.PhoneStatus"><em>PhoneStatus</em></a>) – Status value to persist.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-app.services.auditing">Security audit logging service for tracking security events.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="app.services.auditing.AuditingError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.auditing.</span></span><span class="sig-name descname"><span class="pre">AuditingError</span></span><a class="headerlink" href="#app.services.auditing.AuditingError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raised when audit logging operations fail.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.services.auditing.SecurityAuditService">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.auditing.</span></span><span class="sig-name descname"><span class="pre">SecurityAuditService</span></span><a class="headerlink" href="#app.services.auditing.SecurityAuditService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Logs security-related events for audit trails and monitoring.</p>
+<p>This service provides centralized tracking of security events including
+failed login attempts, role changes, and administrative actions.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.auditing.SecurityAuditService.clear_failed_login_attempts">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clear_failed_login_attempts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#app.services.auditing.SecurityAuditService.clear_failed_login_attempts" title="Link to this definition">¶</a></dt>
+<dd><p>Clears failed login tracking for a user after successful login.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>username</strong> (<em>str</em>) – Username whose failed login tracking should be cleared.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#app.services.auditing.AuditingError" title="app.services.auditing.AuditingError"><strong>AuditingError</strong></a> – If clearing fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.auditing.SecurityAuditService.get_failed_login_count">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_failed_login_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#app.services.auditing.SecurityAuditService.get_failed_login_count" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves the count of recent failed login attempts for a user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>username</strong> (<em>str</em>) – Username to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of failed login attempts in the tracking window.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.auditing.SecurityAuditService.log_account_locked">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_account_locked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#app.services.auditing.SecurityAuditService.log_account_locked" title="Link to this definition">¶</a></dt>
+<dd><p>Logs when an account is locked due to failed login attempts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>username</strong> (<em>str</em>) – Username whose account was locked.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#app.services.auditing.AuditingError" title="app.services.auditing.AuditingError"><strong>AuditingError</strong></a> – If audit logging fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.auditing.SecurityAuditService.log_failed_login">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_failed_login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Invalid</span> <span class="pre">credentials'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#app.services.auditing.SecurityAuditService.log_failed_login" title="Link to this definition">¶</a></dt>
+<dd><p>Logs a failed login attempt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> (<em>str</em>) – Username that failed to authenticate.</p></li>
+<li><p><strong>reason</strong> (<em>str</em>) – Reason for the failure. Defaults to “Invalid credentials”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#app.services.auditing.AuditingError" title="app.services.auditing.AuditingError"><strong>AuditingError</strong></a> – If audit logging fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.auditing.SecurityAuditService.log_role_change">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_role_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acting_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#app.services.auditing.SecurityAuditService.log_role_change" title="Link to this definition">¶</a></dt>
+<dd><p>Logs when a user’s role is modified by an administrator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>acting_user</strong> (<em>str</em>) – Username performing the role change.</p></li>
+<li><p><strong>target_user</strong> (<em>str</em>) – Username whose role was changed.</p></li>
+<li><p><strong>new_role</strong> (<em>str</em>) – New role value.</p></li>
+<li><p><strong>old_role</strong> (<em>str</em>) – Previous role value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#app.services.auditing.AuditingError" title="app.services.auditing.AuditingError"><strong>AuditingError</strong></a> – If audit logging fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.auditing.SecurityAuditService.log_successful_login">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_successful_login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#app.services.auditing.SecurityAuditService.log_successful_login" title="Link to this definition">¶</a></dt>
+<dd><p>Logs a successful login event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>username</strong> (<em>str</em>) – Username that successfully authenticated.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#app.services.auditing.AuditingError" title="app.services.auditing.AuditingError"><strong>AuditingError</strong></a> – If audit logging fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.auditing.SecurityAuditService.log_unauthorized_access_attempt">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_unauthorized_access_attempt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#app.services.auditing.SecurityAuditService.log_unauthorized_access_attempt" title="Link to this definition">¶</a></dt>
+<dd><p>Logs unauthorized access attempts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Username attempting access (may be None).</p></li>
+<li><p><strong>resource</strong> (<em>str</em>) – Resource being accessed.</p></li>
+<li><p><strong>reason</strong> (<em>str</em>) – Reason access was denied.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#app.services.auditing.AuditingError" title="app.services.auditing.AuditingError"><strong>AuditingError</strong></a> – If audit logging fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-app.services.validation">Request payload validation utilities and data models.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.services.validation.LoginData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.validation.</span></span><span class="sig-name descname"><span class="pre">LoginData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.validation.LoginData" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Validated payload for login requests.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.validation.LoginData.password">
+<span class="sig-name descname"><span class="pre">password</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.services.validation.LoginData.password" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.validation.LoginData.token">
+<span class="sig-name descname"><span class="pre">token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.services.validation.LoginData.token" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.validation.LoginData.username">
+<span class="sig-name descname"><span class="pre">username</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.services.validation.LoginData.username" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.services.validation.RegisterData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.validation.</span></span><span class="sig-name descname"><span class="pre">RegisterData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phone_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imei</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.models.Role" title="app.models.Role"><span class="pre">Role</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.validation.RegisterData" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Validated payload for user registration requests.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.validation.RegisterData.email">
+<span class="sig-name descname"><span class="pre">email</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.services.validation.RegisterData.email" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.validation.RegisterData.imei">
+<span class="sig-name descname"><span class="pre">imei</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.services.validation.RegisterData.imei" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.validation.RegisterData.password">
+<span class="sig-name descname"><span class="pre">password</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.services.validation.RegisterData.password" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.validation.RegisterData.phone_number">
+<span class="sig-name descname"><span class="pre">phone_number</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.services.validation.RegisterData.phone_number" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.validation.RegisterData.role">
+<span class="sig-name descname"><span class="pre">role</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#app.models.Role" title="app.models.Role"><span class="pre">Role</span></a></em><a class="headerlink" href="#app.services.validation.RegisterData.role" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.validation.RegisterData.username">
+<span class="sig-name descname"><span class="pre">username</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#app.services.validation.RegisterData.username" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.services.validation.RoleUpdateData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.validation.</span></span><span class="sig-name descname"><span class="pre">RoleUpdateData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.models.Role" title="app.models.Role"><span class="pre">Role</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.validation.RoleUpdateData" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Validated payload for role update requests.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.validation.RoleUpdateData.role">
+<span class="sig-name descname"><span class="pre">role</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#app.models.Role" title="app.models.Role"><span class="pre">Role</span></a></em><a class="headerlink" href="#app.services.validation.RoleUpdateData.role" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.services.validation.StatusUpdateData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.validation.</span></span><span class="sig-name descname"><span class="pre">StatusUpdateData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.models.PhoneStatus" title="app.models.PhoneStatus"><span class="pre">PhoneStatus</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.validation.StatusUpdateData" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Validated payload for user status update requests.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.validation.StatusUpdateData.status">
+<span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#app.models.PhoneStatus" title="app.models.PhoneStatus"><span class="pre">PhoneStatus</span></a></em><a class="headerlink" href="#app.services.validation.StatusUpdateData.status" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.services.validation.UserUpdateData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.validation.</span></span><span class="sig-name descname"><span class="pre">UserUpdateData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phone_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imei</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#app.models.Role" title="app.models.Role"><span class="pre">Role</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.validation.UserUpdateData" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Validated payload for administrative user updates.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.validation.UserUpdateData.email">
+<span class="sig-name descname"><span class="pre">email</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.services.validation.UserUpdateData.email" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.validation.UserUpdateData.imei">
+<span class="sig-name descname"><span class="pre">imei</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.services.validation.UserUpdateData.imei" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.validation.UserUpdateData.phone_number">
+<span class="sig-name descname"><span class="pre">phone_number</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.services.validation.UserUpdateData.phone_number" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.services.validation.UserUpdateData.role">
+<span class="sig-name descname"><span class="pre">role</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#app.models.Role" title="app.models.Role"><span class="pre">Role</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#app.services.validation.UserUpdateData.role" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="app.services.validation.ValidationError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.validation.</span></span><span class="sig-name descname"><span class="pre">ValidationError</span></span><a class="headerlink" href="#app.services.validation.ValidationError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raised when incoming request payloads fail validation.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.services.validation.ValidationService">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.validation.</span></span><span class="sig-name descname"><span class="pre">ValidationService</span></span><a class="headerlink" href="#app.services.validation.ValidationService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Provides helpers for validating and coercing incoming payloads.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.validation.ValidationService.ensure_json_payload">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ensure_json_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#app.services.validation.ValidationService.ensure_json_payload" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures a JSON payload is present for the request.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.validation.ValidationService.parse_login_payload">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_login_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#app.services.validation.LoginData" title="app.services.validation.LoginData"><span class="pre">LoginData</span></a></span></span><a class="headerlink" href="#app.services.validation.ValidationService.parse_login_payload" title="Link to this definition">¶</a></dt>
+<dd><p>Parses and validates login payload content.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.validation.ValidationService.parse_register_payload">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_register_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#app.services.validation.RegisterData" title="app.services.validation.RegisterData"><span class="pre">RegisterData</span></a></span></span><a class="headerlink" href="#app.services.validation.ValidationService.parse_register_payload" title="Link to this definition">¶</a></dt>
+<dd><p>Parses and validates registration payload content.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.validation.ValidationService.parse_role_payload">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_role_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#app.services.validation.RoleUpdateData" title="app.services.validation.RoleUpdateData"><span class="pre">RoleUpdateData</span></a></span></span><a class="headerlink" href="#app.services.validation.ValidationService.parse_role_payload" title="Link to this definition">¶</a></dt>
+<dd><p>Parses and validates administrative role update payloads.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.validation.ValidationService.parse_status_payload">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_status_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#app.services.validation.StatusUpdateData" title="app.services.validation.StatusUpdateData"><span class="pre">StatusUpdateData</span></a></span></span><a class="headerlink" href="#app.services.validation.ValidationService.parse_status_payload" title="Link to this definition">¶</a></dt>
+<dd><p>Parses and validates phone status update payloads.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.services.validation.ValidationService.parse_user_update_payload">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_user_update_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#app.services.validation.UserUpdateData" title="app.services.validation.UserUpdateData"><span class="pre">UserUpdateData</span></a></span></span><a class="headerlink" href="#app.services.validation.ValidationService.parse_user_update_payload" title="Link to this definition">¶</a></dt>
+<dd><p>Parses and validates user metadata update payloads.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-app.routes.auth">Authentication-related endpoints.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.auth.login">
+<span class="sig-prename descclassname"><span class="pre">app.routes.auth.</span></span><span class="sig-name descname"><span class="pre">login</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#app.routes.auth.login" title="Link to this definition">¶</a></dt>
+<dd><p>Authenticates the user and initiates a session.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.auth.logout">
+<span class="sig-prename descclassname"><span class="pre">app.routes.auth.</span></span><span class="sig-name descname"><span class="pre">logout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#app.routes.auth.logout" title="Link to this definition">¶</a></dt>
+<dd><p>Logs out the current session user.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.auth.register">
+<span class="sig-prename descclassname"><span class="pre">app.routes.auth.</span></span><span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#app.routes.auth.register" title="Link to this definition">¶</a></dt>
+<dd><p>Registers a new application user.</p>
+</dd></dl>
+
+<p id="module-app.routes.user">User-facing endpoints for managing phone statuses.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.user.get_profile">
+<span class="sig-prename descclassname"><span class="pre">app.routes.user.</span></span><span class="sig-name descname"><span class="pre">get_profile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#app.routes.user.get_profile" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the authenticated user’s profile.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.user.get_status_history">
+<span class="sig-prename descclassname"><span class="pre">app.routes.user.</span></span><span class="sig-name descname"><span class="pre">get_status_history</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#app.routes.user.get_status_history" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the authenticated user’s phone status history.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Status history payload and</dt><dd><p>HTTP status code.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[dict[str, object], int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.user.get_status_options">
+<span class="sig-prename descclassname"><span class="pre">app.routes.user.</span></span><span class="sig-name descname"><span class="pre">get_status_options</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#app.routes.user.get_status_options" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the allowable phone status values for selection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Allowed statuses and HTTP status code.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[dict[str, object], int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.user.update_status">
+<span class="sig-prename descclassname"><span class="pre">app.routes.user.</span></span><span class="sig-name descname"><span class="pre">update_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#app.routes.user.update_status" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the user’s phone status.</p>
+</dd></dl>
+
+<p id="module-app.routes.manager">Manager and admin-facing endpoints.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.manager.get_user">
+<span class="sig-prename descclassname"><span class="pre">app.routes.manager.</span></span><span class="sig-name descname"><span class="pre">get_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#app.routes.manager.get_user" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the profile and history for a specific user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>username</strong> (<em>str</em>) – Username to retrieve.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>User detail payload and status code.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[dict[str, object], int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.manager.list_user_statuses">
+<span class="sig-prename descclassname"><span class="pre">app.routes.manager.</span></span><span class="sig-name descname"><span class="pre">list_user_statuses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#app.routes.manager.list_user_statuses" title="Link to this definition">¶</a></dt>
+<dd><p>Provides status history for a user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>username</strong> (<em>str</em>) – Username whose statuses are requested.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Status history payload and status code.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[dict[str, object], int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.manager.list_users">
+<span class="sig-prename descclassname"><span class="pre">app.routes.manager.</span></span><span class="sig-name descname"><span class="pre">list_users</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#app.routes.manager.list_users" title="Link to this definition">¶</a></dt>
+<dd><p>Lists user profiles for manager viewing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Serialized users payload and status code.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[dict[str, object], int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.manager.update_user">
+<span class="sig-prename descclassname"><span class="pre">app.routes.manager.</span></span><span class="sig-name descname"><span class="pre">update_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#app.routes.manager.update_user" title="Link to this definition">¶</a></dt>
+<dd><p>Updates user details as an admin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>username</strong> (<em>str</em>) – Username to update.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Updated user payload and status code.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[dict[str, object], int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.manager.update_user_role">
+<span class="sig-prename descclassname"><span class="pre">app.routes.manager.</span></span><span class="sig-name descname"><span class="pre">update_user_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#app.routes.manager.update_user_role" title="Link to this definition">¶</a></dt>
+<dd><p>Allows admins to promote or demote user roles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>username</strong> (<em>str</em>) – Username whose role is being modified.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Response message and status code.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[dict[str, object], int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p id="module-app.routes.responses">Helper utilities for consistent API responses.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.responses.error_response">
+<span class="sig-prename descclassname"><span class="pre">app.routes.responses.</span></span><span class="sig-name descname"><span class="pre">error_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#app.routes.responses.error_response" title="Link to this definition">¶</a></dt>
+<dd><p>Constructs an error response payload.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – Error message to include in the response.</p></li>
+<li><p><strong>status_code</strong> (<em>int</em>) – HTTP status code representing the error.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Error payload and HTTP status code.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[dict[str, object], int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.responses.validation_error_response">
+<span class="sig-prename descclassname"><span class="pre">app.routes.responses.</span></span><span class="sig-name descname"><span class="pre">validation_error_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#app.routes.responses.validation_error_response" title="Link to this definition">¶</a></dt>
+<dd><p>Constructs a validation error response payload.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – Validation error message to include in the response.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Error payload and HTTP 400 status code.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[dict[str, object], int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Phone Management Application</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#app.models.AuditLog"><code class="docutils literal notranslate"><span class="pre">AuditLog</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.models.PhoneStatus"><code class="docutils literal notranslate"><span class="pre">PhoneStatus</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.models.PhoneStatusHistory"><code class="docutils literal notranslate"><span class="pre">PhoneStatusHistory</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.models.PhoneStatusRecord"><code class="docutils literal notranslate"><span class="pre">PhoneStatusRecord</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.models.Role"><code class="docutils literal notranslate"><span class="pre">Role</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.models.User"><code class="docutils literal notranslate"><span class="pre">User</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.models.UserProfile"><code class="docutils literal notranslate"><span class="pre">UserProfile</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.security.HashingError"><code class="docutils literal notranslate"><span class="pre">HashingError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.security.PasswordComplexityError"><code class="docutils literal notranslate"><span class="pre">PasswordComplexityError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.security.PasswordHasherProtocol"><code class="docutils literal notranslate"><span class="pre">PasswordHasherProtocol</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.security.SecurityService"><code class="docutils literal notranslate"><span class="pre">SecurityService</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.auth.AccountLockedError"><code class="docutils literal notranslate"><span class="pre">AccountLockedError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.auth.AuthError"><code class="docutils literal notranslate"><span class="pre">AuthError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.auth.AuthService"><code class="docutils literal notranslate"><span class="pre">AuthService</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.auth.AuthorizationError"><code class="docutils literal notranslate"><span class="pre">AuthorizationError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.auth.PhoneStatusService"><code class="docutils literal notranslate"><span class="pre">PhoneStatusService</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.auditing.AuditingError"><code class="docutils literal notranslate"><span class="pre">AuditingError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.auditing.SecurityAuditService"><code class="docutils literal notranslate"><span class="pre">SecurityAuditService</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.validation.LoginData"><code class="docutils literal notranslate"><span class="pre">LoginData</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.validation.RegisterData"><code class="docutils literal notranslate"><span class="pre">RegisterData</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.validation.RoleUpdateData"><code class="docutils literal notranslate"><span class="pre">RoleUpdateData</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.validation.StatusUpdateData"><code class="docutils literal notranslate"><span class="pre">StatusUpdateData</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.validation.UserUpdateData"><code class="docutils literal notranslate"><span class="pre">UserUpdateData</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.validation.ValidationError"><code class="docutils literal notranslate"><span class="pre">ValidationError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.services.validation.ValidationService"><code class="docutils literal notranslate"><span class="pre">ValidationService</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.routes.auth.login"><code class="docutils literal notranslate"><span class="pre">login()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.routes.auth.logout"><code class="docutils literal notranslate"><span class="pre">logout()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.routes.auth.register"><code class="docutils literal notranslate"><span class="pre">register()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.routes.user.get_profile"><code class="docutils literal notranslate"><span class="pre">get_profile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.routes.user.get_status_history"><code class="docutils literal notranslate"><span class="pre">get_status_history()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.routes.user.get_status_options"><code class="docutils literal notranslate"><span class="pre">get_status_options()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.routes.user.update_status"><code class="docutils literal notranslate"><span class="pre">update_status()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.routes.manager.get_user"><code class="docutils literal notranslate"><span class="pre">get_user()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.routes.manager.list_user_statuses"><code class="docutils literal notranslate"><span class="pre">list_user_statuses()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.routes.manager.list_users"><code class="docutils literal notranslate"><span class="pre">list_users()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.routes.manager.update_user"><code class="docutils literal notranslate"><span class="pre">update_user()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.routes.manager.update_user_role"><code class="docutils literal notranslate"><span class="pre">update_user_role()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.routes.responses.error_response"><code class="docutils literal notranslate"><span class="pre">error_response()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app.routes.responses.validation_error_response"><code class="docutils literal notranslate"><span class="pre">validation_error_response()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Phone Management Application</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/api.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

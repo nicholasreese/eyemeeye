@@ -5,46 +5,87 @@ This web-based application allows users to manage their phone statuses, includin
 
 ## Project Structure
 ```
-/home/nick/Documents/Code/eyemeeye/
-├── src/                     # Source code directory
-│   ├── app/                 # Main application package
-│   │   ├── __init__.py      # Package initialization
-│   │   ├── models.py        # Data models (using dataclasses)
-│   │   ├── routes.py        # API routes
-│   │   ├── services.py      # Business logic
-│   │   └── utils.py         # Utility functions
-│   ├── static/              # Static files (CSS, JS, images)
-│   └── templates/           # HTML templates (if using Flask's rendering)
-├── tests/                   # Test directory
-│   ├── test_app.py          # Tests for the application
-│   └── test_models.py       # Tests for data models
-├── data/                    # Data files (if any)
-├── .gitignore               # Git ignore file
-├── requirements.txt         # Python dependencies
-├── PROJECT_PLAN.md          # Project plan document
-└── README.md                # Project overview and instructions
+├── main.py
+├── src/
+│   ├── __init__.py
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   ├── extensions.py
+│   │   ├── models.py
+│   │   ├── routes/
+│   │   │   ├── __init__.py
+│   │   │   ├── auth.py
+│   │   │   ├── manager.py
+│   │   │   └── user.py
+│   │   ├── services/
+│   │   │   ├── auth.py
+│   │   │   └── security.py
+│   │   └── utils/
+│   │       └── email.py
+│   └── frontend/ (React application)
+├── tests/
+│   └── test_auth.py
+├── docs/
+│   ├── conf.py
+│   └── index.rst
+├── requirements.txt
+├── pyproject.toml
+├── Makefile
+└── README.md
 ```
 
-## Initial Setup
-1. **Version Control**: Initialize a Git repository to track changes.
-   - Command: `git init`
-   
-2. **Virtual Environment**: Create a virtual environment to manage dependencies.
-   - Command: `python3 -m venv venv`
-   - Activate it: 
-     - On Linux/Mac: `source venv/bin/activate`
-     - On Windows: `venv\Scripts\activate`
+## Installation
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+make install
+```
 
-3. **Install Dependencies**: Use the `requirements.txt` file to install necessary packages.
-   - Command: `pip install -r requirements.txt`
+## Running the Backend
+```bash
+flask --app main run
+```
 
-4. **Testing Framework**: Set up `pytest` for testing.
-   - Create test files in the `tests/` directory following the naming conventions.
+## Running the Frontend
+```bash
+cd src/frontend
+npm run dev
+```
 
-5. **Documentation**: Use Sphinx for generating documentation from docstrings.
-   - Command: `sphinx-quickstart` to set up documentation structure.
+## Testing & Quality Checks
+```bash
+make format
+make lint
+make typecheck
+make test
+```
 
-6. **CI/CD Pipeline**: Consider setting up a CI/CD pipeline to automate testing and deployment.
+For an HTML coverage report:
+```bash
+make test-coverage
+```
 
-## Conclusion
-This README provides an overview of the Phone Management Application, its structure, and initial setup instructions. Follow the guidelines to ensure a smooth development process.
+## Documentation
+```bash
+cd docs
+make html
+```
+
+Or from project root:
+```bash
+make docs
+```
+
+## API Summary
+
+Key backend modules and responsibilities:
+
+- `app.models`: ORM models (`User`, `PhoneStatusHistory`, `AuditLog`).
+- `app.services.security`: Password hashing, validation, TOTP helpers.
+- `app.services.auth`: Registration, authentication, account lockout.
+- `app.services.auditing`: Audit logging for security events.
+- `app.services.validation`: Payload parsing and domain validation.
+- `app.routes.*`: Flask Blueprints providing the API endpoints.
+
+See the generated Sphinx docs for full API details.

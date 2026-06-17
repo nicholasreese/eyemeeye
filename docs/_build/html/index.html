@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Phone Management Application &#8212; Phone Management Application  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="api.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="phone-management-application">
+<h1>Phone Management Application<a class="headerlink" href="#phone-management-application" title="Link to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.models.AuditLog"><code class="docutils literal notranslate"><span class="pre">AuditLog</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.models.PhoneStatus"><code class="docutils literal notranslate"><span class="pre">PhoneStatus</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.models.PhoneStatusHistory"><code class="docutils literal notranslate"><span class="pre">PhoneStatusHistory</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.models.PhoneStatusRecord"><code class="docutils literal notranslate"><span class="pre">PhoneStatusRecord</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.models.Role"><code class="docutils literal notranslate"><span class="pre">Role</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.models.User"><code class="docutils literal notranslate"><span class="pre">User</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.models.UserProfile"><code class="docutils literal notranslate"><span class="pre">UserProfile</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.security.HashingError"><code class="docutils literal notranslate"><span class="pre">HashingError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.security.PasswordComplexityError"><code class="docutils literal notranslate"><span class="pre">PasswordComplexityError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.security.PasswordHasherProtocol"><code class="docutils literal notranslate"><span class="pre">PasswordHasherProtocol</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.security.SecurityService"><code class="docutils literal notranslate"><span class="pre">SecurityService</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.auth.AccountLockedError"><code class="docutils literal notranslate"><span class="pre">AccountLockedError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.auth.AuthError"><code class="docutils literal notranslate"><span class="pre">AuthError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.auth.AuthService"><code class="docutils literal notranslate"><span class="pre">AuthService</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.auth.AuthorizationError"><code class="docutils literal notranslate"><span class="pre">AuthorizationError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.auth.PhoneStatusService"><code class="docutils literal notranslate"><span class="pre">PhoneStatusService</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.auditing.AuditingError"><code class="docutils literal notranslate"><span class="pre">AuditingError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.auditing.SecurityAuditService"><code class="docutils literal notranslate"><span class="pre">SecurityAuditService</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.validation.LoginData"><code class="docutils literal notranslate"><span class="pre">LoginData</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.validation.RegisterData"><code class="docutils literal notranslate"><span class="pre">RegisterData</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.validation.RoleUpdateData"><code class="docutils literal notranslate"><span class="pre">RoleUpdateData</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.validation.StatusUpdateData"><code class="docutils literal notranslate"><span class="pre">StatusUpdateData</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.validation.UserUpdateData"><code class="docutils literal notranslate"><span class="pre">UserUpdateData</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.validation.ValidationError"><code class="docutils literal notranslate"><span class="pre">ValidationError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.services.validation.ValidationService"><code class="docutils literal notranslate"><span class="pre">ValidationService</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.routes.auth.login"><code class="docutils literal notranslate"><span class="pre">login()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.routes.auth.logout"><code class="docutils literal notranslate"><span class="pre">logout()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.routes.auth.register"><code class="docutils literal notranslate"><span class="pre">register()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.routes.user.get_profile"><code class="docutils literal notranslate"><span class="pre">get_profile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.routes.user.get_status_history"><code class="docutils literal notranslate"><span class="pre">get_status_history()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.routes.user.get_status_options"><code class="docutils literal notranslate"><span class="pre">get_status_options()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.routes.user.update_status"><code class="docutils literal notranslate"><span class="pre">update_status()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.routes.manager.get_user"><code class="docutils literal notranslate"><span class="pre">get_user()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.routes.manager.list_user_statuses"><code class="docutils literal notranslate"><span class="pre">list_user_statuses()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.routes.manager.list_users"><code class="docutils literal notranslate"><span class="pre">list_users()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.routes.manager.update_user"><code class="docutils literal notranslate"><span class="pre">update_user()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.routes.manager.update_user_role"><code class="docutils literal notranslate"><span class="pre">update_user_role()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.routes.responses.error_response"><code class="docutils literal notranslate"><span class="pre">error_response()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#app.routes.responses.validation_error_response"><code class="docutils literal notranslate"><span class="pre">validation_error_response()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="welcome">
+<h1>Welcome<a class="headerlink" href="#welcome" title="Link to this heading">¶</a></h1>
+<p>This documentation provides an API reference and developer guide for the Phone Management Application.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Developer-oriented API docs are generated from source docstrings (Google-style) using Sphinx autodoc.</p>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">Phone Management Application</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="api.html" title="next chapter">API Reference</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
