@@ -1,0 +1,285 @@
+# Python Project Rules
+
+## Naming Conventions
+- Methods, functions, and variables: snake_case
+- Classes: PascalCase
+- Constants: UPPER_SNAKE_CASE
+- Private methods and attributes: prefix with a single underscore
+- File names: snake_case, and the file name should match the primary class it contains
+
+## Data Model Implementation
+- All data models (Transaction, Budget) should use dataclass implementation
+- Validation should be implemented in `__post_init__` methods
+- All classes must have docstrings explaining their purpose
+- All methods must have Google-style docstrings with description, parameters (Args), and return values (Returns)
+- All method and function parameters must have type hints, and all methods and functions must have return type annotations
+
+## Object-Oriented Programming
+- Follow OOP best practices: use classes with clear responsibilities, encapsulation, and separation of concerns
+- Each class should have a single responsibility — do not create classes that manage unrelated concerns
+- Use private attributes (prefixed with underscore) for internal state that should not be accessed directly
+- Prefer dependency injection — pass dependencies into a class rather than creating them internally
+
+## Documentation and Type Hints
+- All functions and methods must have Google-style docstrings with a description, parameters (Args), and return values (Returns)
+- All classes must have a docstring explaining their purpose
+- Use inline comments to explain non-obvious logic — but do not over-comment obvious code
+- All method and function parameters must have type hints, and all methods and functions must have return type annotations
+- Use Sphinx as the primary documentation generation tool for Python projects
+- Documentation must be generated from docstrings following Google-style format
+- API documentation should be automatically built and published (e.g., to GitHub Pages or Read the Docs)
+- Include auto-generated API reference documentation for all public modules, classes, and functions
+- Documentation should include usage examples and code snippets
+- Generate both HTML and PDF documentation formats
+- Documentation must be versioned and updated with each release
+- Include a documentation build process in the CI pipeline
+- User documentation must be appended to README.md after each phase of implementation
+- Documentation should include project overview, installation instructions, and usage examples
+- Include clear installation steps and prerequisites
+- Add troubleshooting sections for common issues
+- Document configuration options and environment variables
+- Provide API documentation in the README for public interfaces
+
+## Logging and Error Handling
+- Use Python's standard logging module for all application logging
+- Configure logging with appropriate log levels (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+- Log messages should be informative but not verbose
+- Include contextual information in log messages (user IDs, request IDs, etc.)
+- Log to appropriate destinations (console, files, external services)
+- Use structured logging for better parsing and analysis
+- Implement log rotation to prevent disk space issues
+- Log exceptions with full stack traces for debugging
+- Use specific exception types rather than generic exceptions
+- Catch exceptions at the appropriate level in the call stack
+- Always log exceptions with sufficient context for debugging
+- Implement proper exception propagation for meaningful error reporting
+- Use try/except/finally blocks appropriately
+- Don't ignore exceptions silently
+- Create custom exceptions for application-specific error conditions
+- Handle expected error conditions gracefully with user-friendly messages
+- All exceptions should be logged with appropriate severity levels
+- Include relevant context information when raising exceptions
+- Use exception chaining to preserve original error information
+- Implement centralized error handling for API endpoints
+- Provide meaningful error messages to users without exposing internal details
+- Log security-related exceptions (authentication failures, authorization errors)
+- Implement application health checks
+- Monitor application performance and resource usage
+- Set up alerts for critical errors and system failures
+- Log application startup and shutdown events
+- Track important business events and user actions
+- Implement circuit breaker patterns for external service calls
+- Never log sensitive information (passwords, tokens, personal data)
+- Sanitize log output to remove PII before logging
+- Implement proper access controls for log files
+- Use encrypted logging for sensitive applications
+- Implement log auditing for compliance requirements
+- Include error handling in unit tests
+- Test that appropriate exceptions are raised for invalid inputs
+- Verify that error messages are user-friendly and informative
+- Test exception handling paths in integration tests
+- Ensure error recovery mechanisms work correctly
+
+## Security Best Practices
+- All user inputs must be validated before processing
+- Implement both client-side and server-side validation
+- Use whitelisting for allowed input values where possible
+- Validate data types, lengths, and formats of all inputs
+- Sanitize input data to prevent injection attacks
+- Implement rate limiting to prevent abuse of input endpoints
+- Never use eval() or similar dangerous functions
+- Use parameterized queries to prevent SQL injection
+- Implement proper authentication and authorization mechanisms
+- Use secure password hashing (bcrypt, scrypt, or Argon2)
+- Implement secure session management
+- Use HTTPS/TLS for all network communications
+- Encrypt sensitive data at rest using industry-standard encryption
+- Use secure random number generation for cryptographic operations
+- Implement proper access controls and least privilege principles
+- Regularly audit and review security configurations
+- Implement data loss prevention measures
+- Use secure file upload handling with proper validation
+- Implement multi-factor authentication where appropriate
+- Use secure token management (JWT, OAuth, etc.)
+- Implement proper session timeout and invalidation
+- Use role-based access control (RBAC) for sensitive operations
+- Implement secure password policies and account lockout mechanisms
+- Include security scanning in CI pipeline
+- Perform regular vulnerability assessments
+- Implement security testing as part of the testing strategy
+- Include penetration testing for critical applications
+- Use automated security tools for static and dynamic analysis
+- Regular security training for development team members
+- Never log sensitive information (passwords, tokens, personal data) - this is already covered above
+- Sanitize log output to remove PII before logging - this is already covered above
+- Implement proper error handling that doesn't expose internal details
+- Log security-related events (failed logins, access attempts)
+- Implement alerting for security incidents
+- Use structured logging for security event analysis
+- Regularly update and patch all dependencies
+- Monitor for security vulnerabilities in third-party libraries
+- Implement dependency verification and validation
+- Use trusted sources for all dependencies
+- Implement security scanning for all code dependencies
+- Maintain an inventory of all third-party components
+- Follow OWASP Top 10 security guidelines
+- Implement security by design principles
+- Comply with relevant data protection regulations (GDPR, CCPA, etc.)
+- Maintain security documentation and policies
+- Implement incident response procedures
+- Regular security assessments and compliance reviews
+
+## Formatting
+- Follow PEP 8 style guidelines
+- Maximum line length: 88 characters
+- Imports ordered: standard library first, then third-party, then local — with a blank line between each group
+- Maximum cyclomatic complexity for functions should not exceed 10
+- Functions with complexity above 10 should be refactored into smaller, more manageable pieces
+- Maximum lines per function should not exceed 30 lines
+- Functions should be small and focused on a single responsibility
+- If a function exceeds 30 lines, it should be broken down into smaller functions
+- Maximum lines per class should not exceed 100 lines
+- Classes should have a single responsibility and not become "god objects"
+- Maximum lines per file should not exceed 300 lines
+- Maximum nested if/else statements should be 2 levels deep
+- Maximum nested loops should be 2 levels deep
+- Complex conditional logic should be extracted into separate functions
+- Use early returns to reduce nesting levels
+- Code should be readable and maintainable
+- Complex logic should be documented with comments
+- Refactoring should be done proactively rather than reactively
+- Code reviews should consider complexity as part of the evaluation
+
+## Project Structure
+- All source code goes in the src/ directory
+- All tests go in the tests/ directory
+- Data files go in the data/ directory
+- No executable code at module level except inside an if __name__ == "__main__" guard
+- Use pyproject.toml as the primary dependency management file for new projects
+- Maintain requirements.txt for compatibility with legacy systems or specific deployment needs
+- All dependencies must be explicitly versioned with appropriate version constraints
+- Pin exact versions for production dependencies to ensure reproducible builds
+- Use semantic versioning ranges for development dependencies where appropriate
+- Document dependency rationale in comments for major libraries
+- Separate dependencies into categories: Production, Development, Optional
+- Group dependencies by purpose in pyproject.toml
+- Keep dependency lists sorted alphabetically for easier maintenance
+- Regular dependency updates should be monitored and tested
+- Security scanning tools should be integrated into CI pipeline
+- Critical security vulnerabilities must be addressed within 2 weeks
+- Dependency version updates should follow semantic versioning principles
+- Outdated dependencies should be flagged in CI pipeline
+- Use tools like pip-audit or dependabot for automated security checks
+- Use virtual environments for all development work
+- Include dependency installation instructions in README.md
+- Provide a standard command for installing all dependencies (e.g., `make install`)
+- Document how to add new dependencies to the project
+- Specify minimum Python version requirements
+- All dependencies must be tested in development environment
+- CI pipeline should verify that dependencies install correctly
+- Include dependency validation in pre-commit hooks
+- Test with different Python versions if applicable
+- Verify that all dependencies are compatible with each other
+- Document dependency management process in CONTRIBUTING.md
+- Include dependency management best practices in developer onboarding
+- Specify how to add new dependencies to the project
+- Document the process for removing unused dependencies
+- Include information about dependency licensing requirements
+- Provide guidance on when to use pip vs poetry vs other tools
+- Use environment variables for configuration that varies between environments
+- Follow a consistent naming convention for environment variables (UPPER_SNAKE_CASE)
+- Document all required environment variables in README.md
+- Include default values for optional environment variables where appropriate
+- Never hardcode sensitive information like passwords or API keys in source code
+- Use environment variable validation to ensure required values are present
+- Use configuration files (e.g., config.yaml, config.json) for complex application settings
+- Support multiple configuration file formats (YAML, JSON, TOML) based on project needs
+- Organize configuration files by environment (development, staging, production)
+- Include configuration file examples in the repository with default values
+- Implement a centralized configuration loading mechanism
+- Support configuration file fallback to environment variables
+- Validate configuration at application startup
+- Provide clear error messages for missing or invalid configuration values
+- Use type conversion for configuration values to ensure proper data types
+- Never commit sensitive configuration files to version control
+- Use .gitignore to exclude configuration files containing secrets
+- Implement configuration encryption for sensitive data in production
+- Use secure configuration management tools for production environments
+- Rotate secrets regularly and update configurations accordingly
+- Include example configuration files (with dummy values) in the repository
+- Provide clear instructions for setting up local development configuration
+- Document the difference between development, staging, and production configurations
+- Include configuration validation in CI pipeline
+- Support configuration overrides for testing environments
+- Include configuration testing in unit tests
+- Document all configuration options in README.md
+- Include examples of configuration files for different environments
+- Explain the purpose and expected values for each configuration parameter
+- Provide guidance on when to use environment variables vs configuration files
+- Include troubleshooting tips for common configuration issues
+
+## Quality Assurance
+- All code must pass ruff check and ruff format with no errors
+- All code must pass mypy with no type errors
+- Run these checks before considering any task complete
+- CI pipeline must run automated testing, linting, and type checking on every push
+- All code must pass all automated tests before merging to main branch
+- CI pipeline must run ruff check and ruff format on all Python files
+- CI pipeline must run mypy type checking on all Python files
+- Linting and type checking errors must block PR merging until resolved
+- CI pipeline must enforce code quality standards automatically
+- Security scanning must be performed in CI pipeline
+- Build and deployment automation must be part of CI pipeline
+- Pipeline must generate and publish test reports and coverage statistics
+- CI pipeline must track build success/failure metrics
+- Main branch should be protected with required status checks
+- Pull requests must pass all CI checks before merging
+- Code review standards must be enforced for all pull requests
+- Minimum 1 reviewer required for code changes
+- Code reviews must check for security issues and vulnerabilities
+- Code reviews must verify adherence to all project coding standards
+- Pull requests must be approved by at least one reviewer before merging
+- Critical security changes require additional security reviewer approval
+- Code review process should include checking for proper documentation updates
+- Code review checklist should include testing coverage verification
+- Code review process should verify dependency updates and security implications
+
+## Testing Conventions
+- Use pytest as the primary testing framework
+- Test files must be named test_<module>.py and mirror the source structure (e.g., src/storage.py maps to tests/test_storage.py)
+- Test functions must be named test_<what_it_does>_<expected_outcome> (e.g., test_add_contact_with_empty_name_raises_error)
+- Each test must be independent — no test should depend on another test's state or execution order
+- Tests must cover happy path, error cases, and relevant boundary conditions
+- Write tests alongside the code, as part of the same task — a task is not complete until its tests exist and pass
+- All tests must be runnable with `pytest` command
+- Minimum 80% code coverage (statement coverage) with coverage reports generated
+- Coverage reports must be published (e.g., to codecov or similar)
+- Critical business logic should have 100% coverage
+- Integration tests should cover major user flows
+- Tests must pass before any code can be merged to main branch
+- CI pipeline should run all tests with coverage reporting
+- Local development should support running tests with `make test` or similar
+- Include a script to run tests with coverage: `make test-coverage`
+- Support for running specific test files or test functions
+- All tests must be deterministic and not rely on external state
+- Tests should run in isolation (no test dependencies)
+- Use mocking for external dependencies (API calls, databases, file I/O)
+- Include performance tests for critical functions
+- Generate HTML coverage reports
+- Include test execution time monitoring
+- Provide clear failure messages that help identify root causes
+- Support for junitxml output for CI integration
+- Remove or update tests when code is refactored
+- Add tests for bug fixes
+- Regular review of test suite for redundancy or inefficiency
+- Document test assumptions and edge cases
+- Include performance tests for critical functions that are performance-sensitive
+- Establish baseline performance benchmarks for key operations
+- Document expected performance thresholds for core functionality
+- Run benchmarks as part of CI pipeline for regression detection
+- Include performance testing for database operations, API calls, and computational intensive functions
+- Define key performance metrics (response time, throughput, memory usage)
+- Include performance reporting in CI pipeline results
+- Set up alerts for performance regressions beyond acceptable thresholds
+- Test with realistic data sizes and volumes
+- Monitor performance trends over time
