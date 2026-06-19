@@ -1,167 +1,172 @@
 # Technical Context - Implementation Details
 
 ## Tech Stack
-- **Language**: Python 3.12 (strict type checking)
-- **Web Framework**: Flask 2.x with SQLAlchemy ORM
-- **Frontend**: React + TypeScript (Vite) - Phase 4
+- **Language**: Python 3.11 (strict type checking); system Python 3.13 on dev macOS
+- **Web Framework**: Flask 3.x with SQLAlchemy ORM
+- **Frontend**: React 18 + TypeScript (Vite 5)
 - **Database**: SQLite (development/testing), PostgreSQL (production)
-- **Security Libraries**: argon2, pyotp, Flask-Talisman, Flask-WTF
-- **Testing**: pytest with coverage plugins
-- **Quality Tools**: ruff (lint/format), mypy (type checking)
+- **Migrations**: Alembic 1.13
+- **Security Libraries**: argon2-cffi, pyotp, Flask-Talisman, Flask-WTF, Flask-Limiter
+- **Testing**: pytest 8.2 + pytest-cov
+- **Quality Tools**: ruff 0.4 (lint/format), mypy 1.10 (strict), bandit, pip-audit
+- **Documentation**: Sphinx 7.3 (HTML output; intersphinx, napoleon, viewcode)
+- **CI/CD**: GitHub Actions
 
-## Key Dependencies
+## Key Dependencies (requirements.txt — sorted alphabetically)
 
-### Backend (requirements.txt)
+### Production
 ```
-Flask, Flask-SQLAlchemy, Flask-Login, Flask-Limiter
-Flask-WTF (CSRF protection), Flask-Talisman (security headers)
-argon2-cffi (password hashing), pyotp (TOTP), python-dotenv
-pytest, pytest-cov, mypy, ruff
+alembic==1.13.1         # DB schema migrations
+argon2-cffi==23.1.0     # Argon2 password hashing
+Flask==3.0.2
+Flask-Limiter==3.5.0    # Rate limiting (in-memory; Redis for prod)
+Flask-Login==0.6.3
+Flask-SQLAlchemy==3.1.1
+Flask-Talisman==1.1.0   # HTTPS/HSTS/CSP headers
+Flask-WTF==1.2.1        # CSRF protection
+psycopg[binary]==3.2.9  # PostgreSQL driver
+pyotp==2.9.0            # TOTP two-factor auth
+python-dotenv==1.0.1
 ```
 
-### Frontend (package.json) - Phase 4
+### Development & Tooling
 ```
-React, React-Router, TypeScript, Axios
-Tailwind CSS, Vite, ESLint, Prettier
+bandit==1.7.9           # SAST security scanner
+mypy==1.10.0
+pip-audit==2.7.3        # Dependency CVE scanner
+pytest==8.2.2
+pytest-cov==5.0.0
+ruff==0.4.4
+Sphinx==7.3.7
+```
+
+### Frontend (package.json)
+```
+react@18.3.1, react-dom@18.3.1
+typescript@5.4.5, vite@5.2.12, @vitejs/plugin-react@4.3.1
 ```
 
 ## Environment Configuration
 
-### Development (.env)
-```
-FLASK_ENV=development
-SECRET_KEY=dev-secret-key-change-me
-DATABASE_URL=sqlite:///app.db
-ENABLE_HTTPS=false
-RATE_LIMIT=100/hour
-```
+### Required Environment Variables
+| Variable | Default | Notes |
+|---|---|---|
+| `SECRET_KEY` | `dev-secret-key-change-me` | Min 16 chars. **Must change for prod.** |
+| `DATABASE_URL` | `sqlite:///app.db` | Use `postgresql://` URL in prod |
+| `FLASK_ENV` | `development` | Set `production` to reduce log noise |
+| `RATE_LIMIT` | `100/hour` | Flask-Limiter rate limit string |
+| `ENABLE_HTTPS` | `false` | `true` enables HSTS + secure cookies |
+| `TESTING` | `false` | Flask testing mode |
 
-### Production (.env.prod)
-```
-FLASK_ENV=production
-SECRET_KEY=<strong-random-32-char-key>
-DATABASE_URL=postgresql://user:pass@localhost/db
-ENABLE_HTTPS=true
-RATE_LIMIT=100/hour
-```
-
-## Build & Deployment
-
-### Local Development
+### Local Dev Note
+The `.env` file ships with `SECRET_KEY=your_secret_key` (15 chars — below the 16-char
+minimum). Override via env var when starting Flask:
 ```bash
-make install          # Install all dependencies
-make backend          # Install Python packages
-make frontend         # Install Node packages
-make test             # Run test suite (36 tests, 89% coverage)
-make lint             # Run ruff linter
-make typecheck        # Run mypy type checker
-make format           # Auto-format with ruff
+SECRET_KEY="dev-secret-key-for-testing" DATABASE_URL="sqlite:///app.db" python main.py
 ```
 
-### Quality Gates
-All commands must pass before code merge:
-- `make test`: 36/36 tests passing
-- `make lint`: No linting violations (ruff)
-- `make typecheck`: No type errors (mypy strict)
-- `make format`: Code formatted per ruff standards
+### macOS Port Conflict
+Port 5000 is occupied by AirPlay Receiver on macOS Ventura+. Run Flask on 5001:
+```bash
+flask run --port 5001
+```
+`src/frontend/vite.config.ts` proxies `/api` → `http://localhost:5001`.
+
+## Makefile Targets
+```
+make install          Install all dependencies (backend + frontend)
+make backend          pip install -r requirements.txt
+make frontend         cd src/frontend && npm install
+make lint             ruff check
+make format           ruff format
+make typecheck        mypy src
+make test             pytest --cov=src --cov-report=term-missing
+make test-coverage    pytest with HTML coverage report
+make security         bandit -r src/ + pip_audit
+make migrate          alembic upgrade head
+make docs             cd docs && make html
+make ci               lint + format + typecheck + test + security (all CI checks)
+```
 
 ## Database Schema
 
-### Users Table
-- id (PK), username (unique), email (unique), phone_number, imei
-- password_hash, role (enum: USER/MANAGER/ADMIN)
-- two_factor_secret, email_verification_token, is_email_verified
-- created_at (timestamp)
+### users
+- id (PK), username (unique, 3–80 chars), email (unique), phone_number, imei
+- password_hash (Argon2), role (enum: user/manager/admin, default user)
+- two_factor_secret (base32, always generated), email_verification_token
+- is_email_verified (bool, default false), created_at
 
-### PhoneStatusHistory Table
-- id (PK), user_id (FK), status (enum: ONLINE/SOLD/STOLEN/DISPOSED)
-- noted_at (timestamp)
+### phone_status_history
+- id (PK), user_id (FK → users.id, CASCADE DELETE)
+- status (enum: online/sold/stolen/disposed), noted_at
 
-### AuditLog Table
-- id (PK), event_type (string), username (nullable), message (text)
-- created_at (timestamp)
-- Indexes: (event_type, username), (created_at)
+### audit_logs
+- id (PK), event_type (string 64), username (nullable), message (text), created_at
 
-## API Endpoints
+## API Surface
 
-### Authentication (/api/auth)
-- POST /register - User registration
-- POST /login - User login with 2FA
-- POST /logout - User logout
+### /api/auth (CSRF-exempt)
+- `POST /register` — username, email, phone_number, imei, password [, role]
+- `POST /login` — username, password [, token (6-digit TOTP)]
+- `POST /logout` — requires authentication
 
-### User Management (/api/users)
-- GET /me - Current user profile
-- POST /status - Update phone status
-- GET /status/options - Available status values
-- GET /status/history - Status change history
+### /api/users (CSRF-exempt, login required)
+- `GET /me` — current user profile JSON
+- `POST /status` — { status: "online"|"sold"|"stolen"|"disposed" }
+- `GET /status/options` — list of valid status values
+- `GET /status/history` — chronological status entries
 
-### Manager/Admin (/api/manager)
-- GET /users - List all users
-- GET /users/<username> - User details + status history
-- PATCH /users/<username> - Update user details (admin only)
-- PATCH /users/<username>/role - Change user role (admin only)
-- GET /users/<username>/statuses - User status history
+### /api/manager (CSRF-exempt, login required, manager/admin role)
+- `GET /users` — list all users
+- `GET /users/<username>` — user + status history
+- `PATCH /users/<username>` — update email/phone/imei/role (admin only)
+- `PATCH /users/<username>/role` — role change (admin only)
+- `GET /users/<username>/statuses` — status history for a specific user
 
 ## Security Configuration
 
 ### Session Management
-- HTTPONLY: true (JavaScript cannot access cookies)
-- SECURE: true if HTTPS enabled
-- SAMESITE: Strict (default) / Lax
-- Duration: Per Flask-Login default
+- HTTPONLY: always true
+- SECURE: true when ENABLE_HTTPS=true
+- SAMESITE: Strict (HTTPS) / Lax (HTTP)
 
 ### Password Policy
-- Minimum 8 characters, maximum 128
-- Must contain: uppercase, lowercase, digit, special char (@$!%*?&)
-- Hashed with Argon2 (time cost: 2, memory cost: 65536 KB)
+- Length: 8–128 characters
+- Required character types: uppercase, lowercase, digit, special char from `@$!%*?&`
+- Additional characters: any characters permitted (no whitelist restriction)
+- Hash algorithm: Argon2id via argon2-cffi PasswordHasher defaults
 
-### Account Lockout Policy
-- Max failed attempts: 5
-- Lockout duration: Permanent until manual reset (admin)
-- Tracking: In audit log with timestamps
-- Bypass: Admin unlock or successful 2FA verification
+### Account Lockout
+- Threshold: 5 consecutive failed logins
+- Tracking: `audit_logs` table (event_type = "failed_login")
+- Reset: Successful login clears all failed_login entries for that username
+- Unlock: Admin must manually delete audit_log rows or there is no automatic expiry
 
 ### Rate Limiting
-- Current: In-memory (development/testing)
-- Production: Redis recommended
-- Default: 100 requests per hour per IP
-- Configurable via RATE_LIMIT env variable
+- Storage: In-memory (single process only)
+- Default: 100 requests/hour per IP
+- Production recommendation: Configure Redis storage backend
 
-## Monitoring & Logging
+## Test Suite (93 tests, 10 modules)
+| File | Tests | Coverage focus |
+|---|---|---|
+| test_auth.py | 8 | Registration, login, logout, TOTP, RBAC |
+| test_config.py | 3 | AppConfig validation, env loading |
+| test_email.py | 1 | Email utility logging |
+| test_manager.py | 5 | Manager/admin endpoints |
+| test_models.py | 4 | UserProfile, PhoneStatusRecord dataclasses |
+| test_password_verification.py | 38 | Argon2 hash/verify, complexity rules, extended chars |
+| test_responses.py | 2 | error_response, validation_error_response |
+| test_security.py | 20 | Complexity validation, account lockout, audit logging |
+| test_user.py | 3 | User profile, status update, status history |
+| test_validation.py | 9 | Validators, RegisterData, LoginData, UserUpdateData |
 
-### Structured Logging
-- Format: `%(asctime)s %(levelname)s %(name)s %(message)s`
-- Output: stderr (via Flask WSGI)
-- Levels: DEBUG (dev), INFO (prod)
-
-### Security Events Logged
-- Successful/failed login attempts (with reasons)
-- Account lockouts
-- Role changes (actor, target, old/new role)
-- Unauthorized access attempts
-- Failed 2FA attempts
-
-### Audit Trail
-- All events: user, action, timestamp, message
-- Retention: Indefinite (production should set policy)
-- Access: Admin dashboard (Phase 4)
-- Queries: Failed login count, role change history
-
-## Known Issues & Planned Improvements
-
-### Current Warnings
-⚠️ SQLAlchemy deprecation: Query.get() → Session.get() (Phase 4)
-⚠️ In-memory rate limiter: Configure Redis for production
-⚠️ Account unlock: Requires admin intervention (automate? Phase 4)
-
-### Phase 4 Deliverables
-- Frontend React dashboard with TypeScript
-- Admin panel for user/role management
-- User self-service profile editing
-- Audit log viewer for admins
-- Email verification flow UI
-- Sphinx documentation site
-- CI/CD pipeline (GitHub Actions)
-- Security scanning (bandit, pip-audit)
-- Performance monitoring
-- Database migration tools (Alembic)
+## Known Issues / Technical Debt
+- In-memory rate limiter: not suitable for multi-worker or multi-process production
+- Email sending is a stub: logs intent but does not deliver email
+- No email verification enforcement: users can log in without verifying email
+- 2FA is optional per-login: no per-user "enforce 2FA" flag
+- Account unlock: requires manual DB intervention, no admin endpoint
+- No password reset / account recovery flow
+- Sphinx produces HTML only; PDF output requires LaTeX toolchain (not configured)
+- venv in repo is Linux-built (x86_64 ELF); macOS requires system Python (3.13)

@@ -33,9 +33,10 @@ class SecurityService:
 
     _MIN_PASSWORD_LENGTH = 8
     _MAX_PASSWORD_LENGTH = 128
-    _PASSWORD_PATTERN = re.compile(
-        r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[a-zA-Z\d@$!%*?&]{8,128}$"
-    )
+    _SPECIAL_CHARS = re.compile(r"[@$!%*?&]")
+    _UPPERCASE = re.compile(r"[A-Z]")
+    _LOWERCASE = re.compile(r"[a-z]")
+    _DIGIT = re.compile(r"\d")
 
     def __init__(self, hasher: PasswordHasherProtocol | None = None) -> None:
         self._hasher = hasher or PasswordHasher()
@@ -43,12 +44,9 @@ class SecurityService:
     def validate_password_complexity(self, password: str) -> None:
         """Validates that a password meets complexity requirements.
 
-        Password must contain:
-        - At least 8 characters (max 128)
-        - At least one lowercase letter
-        - At least one uppercase letter
-        - At least one digit
-        - At least one special character (@$!%*?&)
+        Password must be 8–128 characters and contain at least one each of:
+        uppercase letter, lowercase letter, digit, and special character
+        from the set ``@$!%*?&``. Any other characters are permitted.
 
         Args:
             password (str): Password to validate.
@@ -63,10 +61,21 @@ class SecurityService:
             )
         if len(password) > self._MAX_PASSWORD_LENGTH:
             raise PasswordComplexityError("Password must not exceed 128 characters.")
-        if not self._PASSWORD_PATTERN.match(password):
+        if not self._UPPERCASE.search(password):
             raise PasswordComplexityError(
-                "Password must contain uppercase, lowercase, digit, and special "
-                "character (@$!%*?&)."
+                "Password must contain at least one uppercase letter."
+            )
+        if not self._LOWERCASE.search(password):
+            raise PasswordComplexityError(
+                "Password must contain at least one lowercase letter."
+            )
+        if not self._DIGIT.search(password):
+            raise PasswordComplexityError(
+                "Password must contain at least one digit."
+            )
+        if not self._SPECIAL_CHARS.search(password):
+            raise PasswordComplexityError(
+                "Password must contain at least one special character (@$!%*?&)."
             )
 
     def hash_password(self, password: str) -> str:
@@ -105,7 +114,7 @@ class SecurityService:
 
         try:
             return self._hasher.verify(hash_value, password)
-        except VerifyMismatchError:  # pragma: no cover - deterministic
+        except VerifyMismatchError:
             return False
         except Exception as exc:  # pragma: no cover - defensive
             raise HashingError("Password verification failed.") from exc

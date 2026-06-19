@@ -1,27 +1,37 @@
-.PHONY: install backend frontend lint format typecheck test docs
+.PHONY: install backend frontend lint format typecheck test test-coverage \
+        security docs migrate ci
 
 install: backend frontend ## Install all dependencies
 
 backend:
-	python -m pip install -r requirements.txt
+	python3 -m pip install -r requirements.txt
 
 frontend:
 	cd src/frontend && npm install
 
 lint:
-	ruff check
+	python3 -m ruff check
 
 format:
-	ruff format
+	python3 -m ruff format
 
 typecheck:
-	mypy src
+	python3 -m mypy src
 
 test:
-	pytest --cov=src --cov-report=term-missing
+	python3 -m pytest --cov=src --cov-report=term-missing
+
+test-coverage:
+	python3 -m pytest --cov=src --cov-report=html --cov-report=term-missing
+
+security:
+	python3 -m bandit -r src/ -q -ll
+	python3 -m pip_audit
 
 docs:
 	cd docs && make html
 
-test-coverage:
-	pytest --cov=src --cov-report=html --cov-report=term-missing
+migrate:
+	alembic upgrade head
+
+ci: lint format typecheck test security ## Run all CI checks locally

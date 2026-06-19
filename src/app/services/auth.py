@@ -182,7 +182,7 @@ class AuthService:
 
         if not user_id.isdigit():
             return None
-        return cast(Optional[User], User.query.get(int(user_id)))
+        return cast(Optional[User], db.session.get(User, int(user_id)))
 
     def require_roles(self, user: UserMixin, allowed_roles: Iterable[Role]) -> None:
         """Ensures the current user possesses one of the allowed roles.

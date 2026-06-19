@@ -81,7 +81,10 @@ def create_app(config: AppConfig | None = None) -> Flask:
     with app.app_context():
         db.create_all()
 
-    login_manager.login_view = "auth.login"
+    @login_manager.unauthorized_handler
+    def _unauthorized() -> tuple[dict[str, str], int]:
+        return {"message": "Authentication required."}, 401
+
     login_manager.user_loader(AuthService.load_user_by_id)
 
     register_blueprints(app, app_config)

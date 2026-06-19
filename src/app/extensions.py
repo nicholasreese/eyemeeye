@@ -12,5 +12,5 @@ from flask_wtf import CSRFProtect
 db = SQLAlchemy()
 login_manager = LoginManager()
 csrf = CSRFProtect()
-limiter = Limiter(key_func=get_remote_address)
+limiter = Limiter(key_func=get_remote_address, storage_uri="memory://")
 talisman = Talisman()

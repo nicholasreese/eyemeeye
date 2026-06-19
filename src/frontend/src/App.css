@@ -1,0 +1,299 @@
+.app {
+  font-family: "Inter", "Segoe UI", sans-serif;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  color: #1f2933;
+}
+
+.site-logo-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.3rem;
+}
+
+.site-logo {
+  height: 144px;
+  width: auto;
+}
+
+.page-title {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 0.25rem;
+}
+
+.page-tagline {
+  font-size: 1.6rem;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #4a5568;
+}
+
+.notification {
+  border: 1px solid #ccd;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.notification--error {
+  background-color: #fee;
+}
+
+.notification--info {
+  background-color: #eef;
+}
+
+.section {
+  margin-bottom: 2rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.06);
+}
+
+.section-title {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  color: #0f172a;
+}
+
+.detail-list {
+  display: grid;
+  gap: 0.35rem;
+  padding-left: 1rem;
+}
+
+.status-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.status-form label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.button {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.button--ghost {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.user-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 520px;
+}
+
+.user-table th,
+.user-table td {
+  text-align: left;
+  padding: 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.user-table th {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.detail-card {
+  margin-top: 1.5rem;
+  background: #fff;
+  border-radius: 10px;
+  padding: 1.25rem;
+  border: 1px solid #e2e8f0;
+}
+
+.admin-form {
+  margin-top: 1rem;
+}
+
+.admin-fieldset {
+  border: 1px solid #cbd5f5;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.admin-field input,
+.admin-field select {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5f5;
+}
+
+.loading-text {
+  text-align: center;
+  color: #64748b;
+  margin-top: 3rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.section-header .section-title {
+  margin-bottom: 0;
+}
+
+.auth-container {
+  max-width: 420px;
+  margin: 3rem auto;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.auth-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+  color: #0f172a;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-weight: 500;
+  color: #334155;
+}
+
+.auth-field input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.auth-optional {
+  font-weight: 400;
+  color: #94a3b8;
+  font-size: 0.85em;
+}
+
+.auth-hint {
+  font-weight: 400;
+  font-size: 0.8em;
+  color: #64748b;
+}
+
+.auth-submit {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.65rem;
+  font-size: 1rem;
+}
+
+.auth-switch {
+  margin: 0.5rem 0 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.auth-link {
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0;
+  text-decoration: underline;
+  font-size: inherit;
+}
+
+@media (max-width: 768px) {
+  .app {
+    padding: 1.25rem;
+  }
+
+  .page-title {
+    font-size: 1.6rem;
+  }
+
+  .section {
+    padding: 1.25rem;
+  }
+
+  .status-form {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .status-form label {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .detail-list {
+    padding-left: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app {
+    padding: 1rem;
+  }
+
+  .section {
+    padding: 1rem;
+  }
+
+  .button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .status-form label {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .status-form select {
+    width: 100%;
+  }
+
+  .admin-field {
+    margin-bottom: 1rem;
+  }
+}

@@ -106,7 +106,11 @@ class User(_UserMixin, _BaseModel):
     two_factor_secret = db.Column(db.String(32), nullable=True)
     email_verification_token = db.Column(db.String(64), nullable=True)
     is_email_verified = db.Column(db.Boolean, default=False, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.now(tz=timezone.utc),
+        nullable=False,
+    )
 
     statuses = db.relationship(
         "PhoneStatusHistory",
@@ -132,7 +136,11 @@ class PhoneStatusHistory(_BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     status = db.Column(SAEnum(PhoneStatus), nullable=False)
-    noted_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    noted_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.now(tz=timezone.utc),
+        nullable=False,
+    )
 
 
 class AuditLog(_BaseModel):
@@ -144,4 +152,8 @@ class AuditLog(_BaseModel):
     event_type = db.Column(db.String(64), nullable=False)
     username = db.Column(db.String(80), nullable=True)
     message = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.now(tz=timezone.utc),
+        nullable=False,
+    )
