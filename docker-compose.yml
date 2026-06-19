@@ -1,0 +1,46 @@
+services:
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: eyemeeye
+      POSTGRES_USER: eyemeeye
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U eyemeeye"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      DATABASE_URL: postgresql://eyemeeye:${POSTGRES_PASSWORD}@db:5432/eyemeeye
+      FLASK_ENV: production
+      RATE_LIMIT: ${RATE_LIMIT:-100/hour}
+      ENABLE_HTTPS: ${ENABLE_HTTPS:-false}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "alembic upgrade head && gunicorn --bind 0.0.0.0:5000 --workers 4 --timeout 60 main:app"
+
+  web:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "${PORT:-80}:80"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
