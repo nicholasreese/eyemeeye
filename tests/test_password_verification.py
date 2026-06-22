@@ -6,6 +6,7 @@ import pytest
 from flask.testing import FlaskClient
 from werkzeug.test import TestResponse
 
+from src.app.models import User
 from src.app.services.security import (
     HashingError,
     PasswordComplexityError,
@@ -21,10 +22,16 @@ _PAYLOAD_BASE = {
 
 
 def _register(client: FlaskClient, username: str, password: str) -> TestResponse:
-    return client.post(
+    response = client.post(
         "/api/auth/register",
         json={**_PAYLOAD_BASE, "username": username, "email": f"{username}@x.com", "password": password},
     )
+    if response.status_code == 201:
+        with client.application.app_context():
+            user: User = User.query.filter_by(username=username).one()
+            token = user.email_verification_token
+        client.get(f"/api/auth/verify-email?token={token}")
+    return response
 
 
 def _login(client: FlaskClient, username: str, password: str) -> TestResponse:
@@ -181,9 +188,9 @@ class TestRegistrationLoginRoundTrip:
     """Full HTTP round-trip tests for passwords with various character sets."""
 
     def test_standard_password_register_and_login(self, client: FlaskClient) -> None:
-        """Standard password registers and logs in successfully."""
+        """Standard password registers and login step 1 succeeds (202 requires_otp)."""
         assert _register(client, "std_user", "ValidPass@123").status_code == 201
-        assert _login(client, "std_user", "ValidPass@123").status_code == 200
+        assert _login(client, "std_user", "ValidPass@123").status_code == 202
 
     def test_wrong_password_rejected_at_login(self, client: FlaskClient) -> None:
         """Login with wrong password returns 401."""
@@ -193,22 +200,22 @@ class TestRegistrationLoginRoundTrip:
     def test_underscore_password_register_and_login(
         self, client: FlaskClient
     ) -> None:
-        """Password with underscore registers and logs in correctly."""
+        """Password with underscore registers and login step 1 succeeds."""
         pw = "Test_Under1!"
         assert _register(client, "underscore_user", pw).status_code == 201
-        assert _login(client, "underscore_user", pw).status_code == 200
+        assert _login(client, "underscore_user", pw).status_code == 202
 
     def test_hyphen_password_register_and_login(self, client: FlaskClient) -> None:
-        """Password with hyphen registers and logs in correctly."""
+        """Password with hyphen registers and login step 1 succeeds."""
         pw = "Test-Hyph1!"
         assert _register(client, "hyphen_user", pw).status_code == 201
-        assert _login(client, "hyphen_user", pw).status_code == 200
+        assert _login(client, "hyphen_user", pw).status_code == 202
 
     def test_space_password_register_and_login(self, client: FlaskClient) -> None:
-        """Password with internal space registers and logs in correctly."""
+        """Password with internal space registers and login step 1 succeeds."""
         pw = "Test Pass1!"
         assert _register(client, "space_user", pw).status_code == 201
-        assert _login(client, "space_user", pw).status_code == 200
+        assert _login(client, "space_user", pw).status_code == 202
 
     def test_wrong_password_after_extended_char_registration(
         self, client: FlaskClient
@@ -225,4 +232,4 @@ class TestRegistrationLoginRoundTrip:
         pw = "Test_1234!"
         resp = _register(client, "regression_user", pw)
         assert resp.status_code == 201, f"Registration failed: {resp.get_json()}"
-        assert _login(client, "regression_user", pw).status_code == 200
+        assert _login(client, "regression_user", pw).status_code == 202

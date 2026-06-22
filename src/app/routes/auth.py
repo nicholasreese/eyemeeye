@@ -10,6 +10,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 from ..services.auth import AccountLockedError, AuthError, AuthService
 from ..services.validation import (
     LoginData,
+    OtpData,
     RegisterData,
     ValidationError,
     ValidationService,
@@ -26,7 +27,7 @@ validation_service = ValidationService()
 
 @auth_bp.post("/register")
 def register() -> tuple[dict[str, object], int]:
-    """Registers a new application user."""
+    """Registers a new application user and sends a verification email."""
 
     payload = request.get_json(silent=True)
     try:
@@ -44,12 +45,21 @@ def register() -> tuple[dict[str, object], int]:
     except AuthError as exc:
         return error_response(str(exc), 400)
 
-    return {"message": f"User {user.username} registered."}, 201
+    return {
+        "message": (
+            f"User {user.username} registered. "
+            "Please check your email to verify your account before signing in."
+        )
+    }, 201
 
 
 @auth_bp.post("/login")
 def login() -> tuple[dict[str, object], int]:
-    """Authenticates the user and initiates a session."""
+    """Validates credentials and sends a one-time login code to the user's email.
+
+    Returns HTTP 202 with ``requires_otp: true`` on success. The session is
+    not created until the code is confirmed via ``POST /verify-otp``.
+    """
 
     payload = request.get_json(silent=True)
     try:
@@ -62,11 +72,51 @@ def login() -> tuple[dict[str, object], int]:
     except AuthError as exc:
         return error_response(str(exc), 401)
 
-    if login_data.token and not auth_service.verify_totp(user, login_data.token):
-        return error_response("Invalid two-factor token.", 401)
+    if not user.is_email_verified:
+        return error_response(
+            "Email address not verified. Please check your inbox for the verification link.",
+            403,
+        )
+
+    auth_service.generate_and_send_login_otp(user)
+    return {
+        "message": "A verification code has been sent to your email.",
+        "requires_otp": True,
+    }, 202
+
+
+@auth_bp.post("/verify-otp")
+def verify_otp() -> tuple[dict[str, object], int]:
+    """Verifies the email OTP and creates an authenticated session."""
+
+    payload = request.get_json(silent=True)
+    try:
+        otp_data: OtpData = validation_service.parse_otp_payload(payload)
+        user = auth_service.verify_login_otp(otp_data.username, otp_data.otp)
+    except ValidationError as exc:
+        return validation_error_response(str(exc))
+    except AccountLockedError as exc:
+        return error_response(str(exc), 429)
+    except AuthError as exc:
+        return error_response(str(exc), 401)
 
     login_user(user)
     return {"message": "Login successful."}, 200
+
+
+@auth_bp.get("/verify-email")
+def verify_email() -> tuple[dict[str, object], int]:
+    """Verifies a user's email address using the token from the registration email."""
+
+    token = request.args.get("token", "").strip()
+    if not token:
+        return error_response("Verification token is required.", 400)
+    try:
+        auth_service.verify_email_token(token)
+    except AuthError as exc:
+        return error_response(str(exc), 400)
+
+    return {"message": "Email verified. You may now sign in."}, 200
 
 
 @auth_bp.post("/logout")

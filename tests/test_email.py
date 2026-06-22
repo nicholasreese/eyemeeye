@@ -2,17 +2,22 @@
 
 from __future__ import annotations
 
-import logging
+from unittest.mock import patch
 
 import pytest
+from flask import Flask
 
 from src.app.utils.email import send_verification_email
 
 
-def test_send_verification_email_logs_message(caplog: pytest.LogCaptureFixture) -> None:
-    """send_verification_email should log the email payload."""
+def test_send_verification_email_calls_mail_send(app: Flask) -> None:
+    """send_verification_email should call mail.send with the recipient address."""
 
-    with caplog.at_level(logging.INFO):
-        send_verification_email("user@example.com", "token123")
+    with app.test_request_context():
+        with patch("src.app.utils.email.mail") as mock_mail:
+            send_verification_email("user@example.com", "token123")
 
-    assert "Sending verification email" in caplog.text
+    mock_mail.send.assert_called_once()
+    message = mock_mail.send.call_args[0][0]
+    assert "user@example.com" in message.recipients
+    assert "Verify" in message.subject

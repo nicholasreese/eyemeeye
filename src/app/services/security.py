@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import secrets
 from typing import Protocol
 
 import pyotp
@@ -127,3 +128,15 @@ class SecurityService:
         """
 
         return pyotp.random_base32()
+
+    def generate_email_otp(self) -> tuple[str, str]:
+        """Generates a 6-digit email OTP and returns the plaintext and its hash.
+
+        Returns:
+            tuple[str, str]: (plaintext_otp, argon2_hash) pair. Store only
+            the hash; pass the plaintext to the user via email.
+        """
+
+        otp = f"{secrets.randbelow(1_000_000):06d}"
+        otp_hash = self._hasher.hash(otp)
+        return otp, otp_hash

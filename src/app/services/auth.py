@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timedelta
 from typing import Iterable, Optional, Sequence, cast
 
 import pyotp
@@ -10,7 +11,7 @@ from sqlalchemy.exc import IntegrityError
 
 from ..extensions import db
 from ..models import PhoneStatus, Role, User
-from ..utils.email import send_verification_email
+from ..utils.email import send_login_otp, send_verification_email
 from .auditing import SecurityAuditService
 from .security import PasswordComplexityError, SecurityService
 
@@ -183,6 +184,86 @@ class AuthService:
         if not user_id.isdigit():
             return None
         return cast(Optional[User], db.session.get(User, int(user_id)))
+
+    def generate_and_send_login_otp(self, user: User) -> None:
+        """Generates a login OTP, stores the hash, and emails the code to the user.
+
+        Args:
+            user (User): Authenticated user awaiting OTP verification.
+        """
+
+        otp, otp_hash = self._security.generate_email_otp()
+        user.otp_code_hash = otp_hash
+        user.otp_expires_at = datetime.utcnow() + timedelta(minutes=10)
+        db.session.commit()
+        send_login_otp(user.email, otp)
+
+    def verify_login_otp(self, username: str, otp: str) -> User:
+        """Verifies the email OTP and returns the user on success.
+
+        Tracks OTP failures against the same account lockout counter as
+        password failures. Clears the OTP from the database after use.
+
+        Args:
+            username (str): Username for the pending login.
+            otp (str): 6-digit OTP submitted by the user.
+
+        Returns:
+            User: The authenticated user.
+
+        Raises:
+            AccountLockedError: If the account is locked.
+            AuthError: If the OTP is missing, expired, or incorrect.
+        """
+
+        if self._is_account_locked(username):
+            self._audit.log_unauthorized_access_attempt(
+                username, "verify-otp", "Account locked"
+            )
+            raise AccountLockedError("Account is locked. Please contact support.")
+
+        user = User.query.filter_by(username=username).one_or_none()
+        if not user or not user.otp_code_hash or not user.otp_expires_at:
+            raise AuthError("No pending verification code for this account.")
+
+        if datetime.utcnow() > user.otp_expires_at:
+            user.otp_code_hash = None
+            user.otp_expires_at = None
+            db.session.commit()
+            raise AuthError("Verification code has expired. Please log in again.")
+
+        if not self._security.verify_password(user.otp_code_hash, otp):
+            self._audit.log_failed_login(username, "Invalid OTP")
+            if self._is_account_locked(username):
+                self._audit.log_account_locked(username)
+                raise AccountLockedError("Account is locked. Please contact support.")
+            raise AuthError("Invalid verification code.")
+
+        user.otp_code_hash = None
+        user.otp_expires_at = None
+        db.session.commit()
+        self._audit.clear_failed_login_attempts(username)
+        self._audit.log_successful_login(username)
+
+        return cast(User, user)
+
+    def verify_email_token(self, token: str) -> None:
+        """Marks the user's email as verified using their registration token.
+
+        Args:
+            token (str): Email verification token from the registration email.
+
+        Raises:
+            AuthError: If the token is invalid or already used.
+        """
+
+        user = User.query.filter_by(email_verification_token=token).one_or_none()
+        if not user:
+            raise AuthError("Invalid or expired verification token.")
+
+        user.is_email_verified = True
+        user.email_verification_token = None
+        db.session.commit()
 
     def require_roles(self, user: UserMixin, allowed_roles: Iterable[Role]) -> None:
         """Ensures the current user possesses one of the allowed roles.

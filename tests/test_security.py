@@ -2,12 +2,37 @@
 
 from __future__ import annotations
 
+from unittest.mock import patch
+
 import pytest
 from flask.testing import FlaskClient
 from werkzeug.test import TestResponse
 
 from src.app.models import User
 from src.app.services.security import PasswordComplexityError, SecurityService
+
+
+def _verify_email(client: FlaskClient, username: str) -> None:
+    with client.application.app_context():
+        user = User.query.filter_by(username=username).one()
+        token = user.email_verification_token
+    resp = client.get(f"/api/auth/verify-email?token={token}")
+    assert resp.status_code == 200
+
+
+def _login_user(client: FlaskClient, username: str, password: str) -> None:
+    with patch("src.app.services.auth.send_login_otp") as mock_send:
+        response: TestResponse = client.post(
+            "/api/auth/login",
+            json={"username": username, "password": password},
+        )
+        assert response.status_code == 202
+        captured_otp: str = mock_send.call_args[0][1]
+    response = client.post(
+        "/api/auth/verify-otp",
+        json={"username": username, "otp": captured_otp},
+    )
+    assert response.status_code == 200
 
 
 class TestPasswordComplexityValidation:
@@ -232,8 +257,6 @@ class TestAccountLockout:
 
     def test_successful_login_clears_failed_attempts(self, client: FlaskClient) -> None:
         """Successful login should clear failed attempt tracking."""
-        import pyotp
-
         response: TestResponse = client.post(
             "/api/auth/register",
             json={
@@ -245,6 +268,7 @@ class TestAccountLockout:
             },
         )
         assert response.status_code == 201
+        _verify_email(client, "cleartest")
 
         response = client.post(
             "/api/auth/login",
@@ -252,20 +276,7 @@ class TestAccountLockout:
         )
         assert response.status_code == 401
 
-        with client.application.app_context():
-            user = User.query.filter_by(username="cleartest").one()
-            totp = pyotp.TOTP(user.two_factor_secret)
-            token = totp.now()
-
-        response = client.post(
-            "/api/auth/login",
-            json={
-                "username": "cleartest",
-                "password": "ValidPass@123",
-                "token": token,
-            },
-        )
-        assert response.status_code == 200
+        _login_user(client, "cleartest", "ValidPass@123")
 
         response = client.post(
             "/api/auth/login",
@@ -279,8 +290,6 @@ class TestSecurityAuditLogging:
 
     def test_successful_login_logged(self, client: FlaskClient) -> None:
         """Successful login should be logged."""
-        import pyotp
-
         response: TestResponse = client.post(
             "/api/auth/register",
             json={
@@ -292,21 +301,8 @@ class TestSecurityAuditLogging:
             },
         )
         assert response.status_code == 201
-
-        with client.application.app_context():
-            user = User.query.filter_by(username="successlog").one()
-            totp = pyotp.TOTP(user.two_factor_secret)
-            token = totp.now()
-
-        response = client.post(
-            "/api/auth/login",
-            json={
-                "username": "successlog",
-                "password": "ValidPass@123",
-                "token": token,
-            },
-        )
-        assert response.status_code == 200
+        _verify_email(client, "successlog")
+        _login_user(client, "successlog", "ValidPass@123")
 
         with client.application.app_context():
             from src.app.models import AuditLog
@@ -322,8 +318,6 @@ class TestSecurityAuditLogging:
 
     def test_role_change_logged(self, client: FlaskClient) -> None:
         """Role changes should be logged to audit trail."""
-        import pyotp
-
         admin_response: TestResponse = client.post(
             "/api/auth/register",
             json={
@@ -336,6 +330,7 @@ class TestSecurityAuditLogging:
             },
         )
         assert admin_response.status_code == 201
+        _verify_email(client, "admin1")
 
         user_response: TestResponse = client.post(
             "/api/auth/register",
@@ -349,20 +344,7 @@ class TestSecurityAuditLogging:
         )
         assert user_response.status_code == 201
 
-        with client.application.app_context():
-            admin_user = User.query.filter_by(username="admin1").one()
-            totp = pyotp.TOTP(admin_user.two_factor_secret)
-            token = totp.now()
-
-        login_response: TestResponse = client.post(
-            "/api/auth/login",
-            json={
-                "username": "admin1",
-                "password": "AdminPass@123",
-                "token": token,
-            },
-        )
-        assert login_response.status_code == 200
+        _login_user(client, "admin1", "AdminPass@123")
 
         role_response: TestResponse = client.patch(
             "/api/manager/users/promoteme/role",
@@ -395,23 +377,8 @@ class TestSecurityAuditLogging:
             },
         )
         assert response.status_code == 201
-
-        import pyotp
-
-        with client.application.app_context():
-            user = User.query.filter_by(username="normaluser").one()
-            totp = pyotp.TOTP(user.two_factor_secret)
-            token = totp.now()
-
-        login_response: TestResponse = client.post(
-            "/api/auth/login",
-            json={
-                "username": "normaluser",
-                "password": "ValidPass@123",
-                "token": token,
-            },
-        )
-        assert login_response.status_code == 200
+        _verify_email(client, "normaluser")
+        _login_user(client, "normaluser", "ValidPass@123")
 
         response = client.get("/api/manager/users")
         assert response.status_code == 403

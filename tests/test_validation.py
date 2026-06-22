@@ -72,7 +72,7 @@ def test_login_data_validation_rejects_missing_password() -> None:
     """LoginData should reject blank passwords."""
 
     with pytest.raises(ValidationError, match="password is required"):
-        LoginData(username="user", password="", token=None)
+        LoginData(username="user", password="")
 
 
 def test_user_update_payload_rejects_unknown_fields() -> None:

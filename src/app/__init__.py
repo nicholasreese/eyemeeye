@@ -8,7 +8,7 @@ from logging.config import dictConfig
 from flask import Flask
 
 from .config import AppConfig, load_config
-from .extensions import csrf, db, limiter, login_manager, talisman
+from .extensions import csrf, db, limiter, login_manager, mail, talisman
 from .routes import register_blueprints
 from .services.auth import AuthService
 
@@ -65,8 +65,19 @@ def create_app(config: AppConfig | None = None) -> Flask:
         app.config.setdefault("SESSION_COOKIE_HTTPONLY", True)
         app.config.setdefault("SESSION_COOKIE_SAMESITE", "Lax")
 
+    app.config.update(
+        MAIL_SERVER=app_config.mail_server,
+        MAIL_PORT=app_config.mail_port,
+        MAIL_USE_TLS=app_config.mail_use_tls,
+        MAIL_USERNAME=app_config.mail_username or None,
+        MAIL_PASSWORD=app_config.mail_password or None,
+        MAIL_DEFAULT_SENDER=app_config.mail_sender,
+        MAIL_SUPPRESS_SEND=app_config.testing,
+    )
+
     db.init_app(app)
     csrf.init_app(app)
+    mail.init_app(app)
     limiter.init_app(app)
     talisman.init_app(
         app,

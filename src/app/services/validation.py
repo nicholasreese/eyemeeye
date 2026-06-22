@@ -46,7 +46,6 @@ class LoginData:
 
     username: str
     password: str
-    token: str | None
 
     def __post_init__(self) -> None:
         """Validates login-specific fields."""
@@ -55,8 +54,22 @@ class LoginData:
             raise ValidationError("username must be at least 3 characters long")
         if not self.password:
             raise ValidationError("password is required")
-        if self.token is not None and not _is_valid_totp(self.token):
-            raise ValidationError("token must be a 6-digit numeric string")
+
+
+@dataclass(frozen=True)
+class OtpData:
+    """Validated payload for email OTP verification requests."""
+
+    username: str
+    otp: str
+
+    def __post_init__(self) -> None:
+        """Validates OTP verification fields."""
+
+        if len(self.username) < 3:
+            raise ValidationError("username must be at least 3 characters long")
+        if not _is_valid_totp(self.otp):
+            raise ValidationError("otp must be a 6-digit numeric string")
 
 
 @dataclass(frozen=True)
@@ -130,11 +143,23 @@ class ValidationService:
         if missing:
             field_list = ", ".join(sorted(missing))
             raise ValidationError(f"Missing required fields: {field_list}")
-        token = data.get("token")
         return LoginData(
             username=str(data["username"]).strip(),
             password=str(data["password"]),
-            token=str(token).strip() if token is not None else None,
+        )
+
+    @staticmethod
+    def parse_otp_payload(payload: Mapping[str, Any] | None) -> OtpData:
+        """Parses and validates OTP verification payload content."""
+
+        data = ValidationService.ensure_json_payload(payload)
+        missing = {"username", "otp"} - data.keys()
+        if missing:
+            field_list = ", ".join(sorted(missing))
+            raise ValidationError(f"Missing required fields: {field_list}")
+        return OtpData(
+            username=str(data["username"]).strip(),
+            otp=str(data["otp"]).strip(),
         )
 
     @staticmethod

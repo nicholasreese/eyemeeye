@@ -12,12 +12,11 @@ import type {
 
 import "./App.css";
 
-type View = "loading" | "login" | "register" | "dashboard";
+type View = "loading" | "login" | "register" | "otp" | "dashboard";
 
 interface LoginForm {
   username: string;
   password: string;
-  token: string;
 }
 
 interface RegisterForm {
@@ -35,7 +34,7 @@ const STATUS_LABELS: Record<PhoneStatusValue, string> = {
   disposed: "Disposed",
 };
 
-const EMPTY_LOGIN: LoginForm = { username: "", password: "", token: "" };
+const EMPTY_LOGIN: LoginForm = { username: "", password: "" };
 const EMPTY_REGISTER: RegisterForm = {
   username: "",
   email: "",
@@ -61,6 +60,8 @@ async function apiPost(
 
 export default function App() {
   const [view, setView] = useState<View>("loading");
+  const [pendingUsername, setPendingUsername] = useState<string>("");
+  const [otpCode, setOtpCode] = useState<string>("");
   const [loginForm, setLoginForm] = useState<LoginForm>(EMPTY_LOGIN);
   const [registerForm, setRegisterForm] = useState<RegisterForm>(EMPTY_REGISTER);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -123,18 +124,43 @@ export default function App() {
   const handleLogin = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     try {
-      const body: Record<string, string> = {
+      const response = await apiPost("/api/auth/login", {
         username: loginForm.username,
         password: loginForm.password,
-      };
-      if (loginForm.token.trim()) body.token = loginForm.token.trim();
-      const response = await apiPost("/api/auth/login", body);
-      const payload: { message: string } = await response.json();
+      });
+      const payload: { message: string; requires_otp?: boolean } = await response.json();
       if (!response.ok) {
         addNotification("error", payload.message ?? "Login failed");
         return;
       }
+      if (payload.requires_otp) {
+        setPendingUsername(loginForm.username);
+        setLoginForm(EMPTY_LOGIN);
+        setOtpCode("");
+        setView("otp");
+        return;
+      }
       setLoginForm(EMPTY_LOGIN);
+      await loadProfile();
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const handleVerifyOtp = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+    event.preventDefault();
+    try {
+      const response = await apiPost("/api/auth/verify-otp", {
+        username: pendingUsername,
+        otp: otpCode,
+      });
+      const payload: { message: string } = await response.json();
+      if (!response.ok) {
+        addNotification("error", payload.message ?? "Verification failed");
+        return;
+      }
+      setOtpCode("");
+      setPendingUsername("");
       await loadProfile();
     } catch (error) {
       handleError(error);
@@ -350,17 +376,6 @@ export default function App() {
               required
             />
           </AuthField>
-          <AuthField label="2FA Code" hint="optional">
-            <input
-              type="text"
-              name="token"
-              value={loginForm.token}
-              onChange={updateLoginForm}
-              inputMode="numeric"
-              maxLength={6}
-              placeholder="123456"
-            />
-          </AuthField>
         </AuthCard>
       )}
 
@@ -428,6 +443,52 @@ export default function App() {
             />
           </AuthField>
         </AuthCard>
+      )}
+
+      {view === "otp" && (
+        <div className="auth-container">
+          <form
+            onSubmit={(e) => { void handleVerifyOtp(e); }}
+            className="auth-form"
+          >
+            <h2 className="auth-title">Check Your Email</h2>
+            <p className="auth-hint">
+              A 6-digit code was sent to the address for{" "}
+              <strong>{pendingUsername}</strong>. Enter it below.
+            </p>
+            <label className="auth-field">
+              Verification Code
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="\d{6}"
+                maxLength={6}
+                value={otpCode}
+                onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
+                required
+                autoFocus
+                placeholder="123456"
+              />
+            </label>
+            <button type="submit" className="button auth-submit">
+              Verify
+            </button>
+            <p className="auth-switch">
+              Wrong account?{" "}
+              <button
+                type="button"
+                className="auth-link"
+                onClick={() => {
+                  setPendingUsername("");
+                  setOtpCode("");
+                  setView("login");
+                }}
+              >
+                Back to sign in
+              </button>
+            </p>
+          </form>
+        </div>
       )}
 
       {view === "dashboard" && profile && (

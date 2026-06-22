@@ -106,6 +106,8 @@ class User(_UserMixin, _BaseModel):
     two_factor_secret = db.Column(db.String(32), nullable=True)
     email_verification_token = db.Column(db.String(64), nullable=True)
     is_email_verified = db.Column(db.Boolean, default=False, nullable=False)
+    otp_code_hash = db.Column(db.String(255), nullable=True)
+    otp_expires_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(
         db.DateTime,
         default=lambda: datetime.now(tz=timezone.utc),

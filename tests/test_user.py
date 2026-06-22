@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from typing import Any, Mapping
+from unittest.mock import patch
 
-import pyotp
 from flask.testing import FlaskClient
 from werkzeug.test import TestResponse
 
@@ -31,17 +31,24 @@ def _register_user(
     assert response.status_code == 201
     with client.application.app_context():
         user: User = User.query.filter_by(username=username).one()
-        return user
+        token = user.email_verification_token
+    verify_response = client.get(f"/api/auth/verify-email?token={token}")
+    assert verify_response.status_code == 200
+    with client.application.app_context():
+        return User.query.filter_by(username=username).one()
 
 
 def _login_user(client: FlaskClient, username: str) -> None:
-    with client.application.app_context():
-        user = User.query.filter_by(username=username).one()
-        totp = pyotp.TOTP(user.two_factor_secret)
-        token = totp.now()
-    response: TestResponse = client.post(
-        "/api/auth/login",
-        json={"username": username, "password": "Test@1234", "token": token},
+    with patch("src.app.services.auth.send_login_otp") as mock_send:
+        response: TestResponse = client.post(
+            "/api/auth/login",
+            json={"username": username, "password": "Test@1234"},
+        )
+        assert response.status_code == 202
+        captured_otp: str = mock_send.call_args[0][1]
+    response = client.post(
+        "/api/auth/verify-otp",
+        json={"username": username, "otp": captured_otp},
     )
     assert response.status_code == 200
 
