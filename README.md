@@ -29,7 +29,7 @@ eyemeeye/
 │       └── src/
 │           ├── App.tsx            # SPA — login, register, dashboard
 │           └── types.ts           # TypeScript interfaces
-├── tests/                         # pytest — 93 tests across 10 modules
+├── tests/                         # pytest — 112 tests across 11 modules
 ├── docs/                          # Sphinx documentation source
 ├── .github/workflows/ci.yml       # GitHub Actions CI
 ├── Makefile                       # Developer shortcuts
@@ -297,7 +297,11 @@ make docs
 | Prefix | Auth required | Description |
 | --- | --- | --- |
 | `POST /api/auth/register` | No | Create a new user account |
-| `POST /api/auth/login` | No | Log in (optional TOTP token) |
+| `POST /api/auth/login` | No | Step 1 of login — validates password, sends OTP |
+| `POST /api/auth/verify-otp` | No | Step 2 of login — verifies OTP, creates session |
+| `GET /api/auth/verify-email` | No | Confirm email address from registration link |
+| `POST /api/auth/forgot-password` | No | Request a password reset link via email |
+| `POST /api/auth/reset-password` | No | Set a new password using the reset token |
 | `POST /api/auth/logout` | Yes | End the session |
 | `GET /api/users/me` | Yes | Current user profile |
 | `POST /api/users/status` | Yes | Update phone status |

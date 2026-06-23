@@ -39,6 +39,7 @@ Users need a centralized, secure way to:
 - ✅ Email-based two-factor authentication (mandatory — a 6-digit OTP is emailed
   on every login; TOTP is no longer used)
 - ✅ Email verification enforced — login blocked (403) until email confirmed
+- ✅ Password reset via email token (1-hour expiry; single-use; no account enumeration)
 - ✅ Secure communication (HTTPS/HSTS support via Flask-Talisman)
 - ✅ CSRF protection on all state-changing operations
 - ✅ Comprehensive audit logging (login, role changes, unauthorized access)
@@ -47,17 +48,18 @@ Users need a centralized, secure way to:
 ### Functional Requirements
 - ✅ User registration with mandatory email verification (Flask-Mail sends real email)
 - ✅ Secure two-step login (password check → email OTP verification)
+- ✅ Forgot password / password reset flow (email token link → new password form)
 - ✅ Phone status management (4 states: online, sold, stolen, disposed)
 - ✅ User profile display (username, email, phone, IMEI, role)
 - ✅ Manager view-only access and user status history
 - ✅ Admin user management capabilities (profile + role updates)
 - ✅ Role-based access control
-- ✅ Frontend portal: login, OTP verification, register, dashboard, manager panel,
-  admin edit form
+- ✅ Frontend portal: login, OTP verification, register, forgot password, reset password,
+  dashboard, manager panel, admin edit form
 
 ### Quality Requirements
 - ✅ Strict typing (mypy --strict configured; tsc --noEmit zero errors)
-- ✅ 99 test cases across 10 test modules — all passing
+- ✅ 112 test cases across 11 test modules — all passing
 - ✅ All linting checks passing (ruff)
 - ✅ Google-style docstrings on all functions/classes
 - ✅ Comprehensive error handling with specific exceptions
@@ -69,17 +71,17 @@ Users need a centralized, secure way to:
 - **Logo**: `logo2.svg` centered above the heading on every page
 
 ## Success Metrics (Current State)
-- 99 passing tests, 0 failures
+- 112 passing tests, 0 failures
 - All password character sets now accepted (underscore, hyphen, space, etc.)
 - Two-step login with email OTP enforced for all users
 - Email verification required before first login
-- React UI: login → OTP → dashboard state machine
+- Password reset flow: email token link → single-use, 1-hour expiry, no account enumeration
+- React UI: login → forgot-password | reset-password | OTP → dashboard state machine
 - CI pipeline enforces lint, typecheck, test, and security scan on every push
-- Alembic handles schema migrations (two migrations: initial schema + OTP fields)
+- Alembic handles schema migrations (three migrations: initial schema, OTP fields, password reset fields)
 - Sphinx generates HTML API docs and usage guides
 
 ## Known Limitations
 - Account unlock requires manual DB/admin intervention (no expiry timer, no endpoint)
-- No password reset / account recovery flow
 - Rate limiter uses in-memory storage (not suitable for multi-process production)
 - No admin UI for viewing audit logs

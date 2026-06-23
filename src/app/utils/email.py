@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 
-from flask import url_for
+from flask import request, url_for
 from flask_mail import Message
 
 from ..extensions import mail
@@ -36,6 +36,34 @@ def send_verification_email(email: str, token: str) -> None:
         mail.send(msg)
     except Exception:
         logger.exception("Failed to send verification email to %s", email)
+
+
+def send_password_reset_email(email: str, token: str) -> None:
+    """Sends a password reset email with a one-time link.
+
+    Args:
+        email (str): Recipient email address.
+        token (str): Password reset token to include in the link.
+    """
+
+    try:
+        logger.info("Sending password reset email to %s", email)
+        base = request.host_url.rstrip("/")
+        reset_url = f"{base}/?reset_token={token}"
+        msg = Message(
+            subject="Reset your EyeMeEye password",
+            recipients=[email],
+            body=(
+                "You requested a password reset for your EyeMeEye account.\n\n"
+                "Click the link below to set a new password:\n\n"
+                f"  {reset_url}\n\n"
+                "This link expires in 1 hour.\n\n"
+                "If you did not request a password reset, you can ignore this email.\n"
+            ),
+        )
+        mail.send(msg)
+    except Exception:
+        logger.exception("Failed to send password reset email to %s", email)
 
 
 def send_login_otp(email: str, otp: str) -> None:

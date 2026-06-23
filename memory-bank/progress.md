@@ -1,3 +1,60 @@
+## 2026-06-24 — Forgot Password / Password Reset Implemented
+
+### Forgot Password Feature
+Full end-to-end password reset flow added across backend and frontend.
+
+**Reset flow:**
+1. User clicks "Forgot password?" on login → `POST /api/auth/forgot-password` with `{email}`
+2. Backend looks up user by email, generates a `secrets.token_urlsafe(32)` token, stores it
+   plaintext (same pattern as email verification token), sets 1-hour expiry, sends email.
+   Always returns HTTP 200 — unknown emails silently no-op to avoid account enumeration.
+3. Email contains a link `{host}/?reset_token=TOKEN`
+4. Frontend detects `?reset_token=` in `window.location.search` on initial load, strips it
+   from the URL bar, and switches to the `"reset-password"` view
+5. User enters new password → `POST /api/auth/reset-password` with `{token, new_password}`
+6. Backend finds user by token, checks expiry, hashes new password, clears token fields → 200
+
+### Backend Changes
+- `User` model gains: `password_reset_token (String 64, nullable)`,
+  `password_reset_expires_at (DateTime, nullable)`
+- Alembic migration `003_add_password_reset_fields.py`
+- `SecurityService.generate_reset_token()` — `secrets.token_urlsafe(32)`
+- `AuthService.request_password_reset(email)` — silently no-ops on unknown email
+- `AuthService.reset_password(token, new_password)` — validates expiry, updates password hash,
+  clears token; raises `AuthError` on invalid/expired token
+- `send_password_reset_email(email, token)` added to `email.py` — builds link from
+  `request.host_url` (frontend SPA URL, not a backend API path)
+- `ForgotPasswordData`, `ResetPasswordData` dataclasses + parsers added to `validation.py`
+- `POST /api/auth/forgot-password` and `POST /api/auth/reset-password` routes added to
+  `auth` blueprint
+
+### Frontend Changes (App.tsx)
+- `View` type extended: `"forgot-password"` and `"reset-password"` added
+- Initial `useEffect` checks `window.location.search` for `?reset_token=`; if found, stores
+  token in state, strips it from URL bar, and switches to `"reset-password"` view
+- States added: `forgotEmail`, `resetToken`, `resetNewPassword`
+- `handleForgotPassword` and `handleResetPassword` handlers added
+- "Forgot password?" link added to login view (below submit button via `AuthCard` `footer` prop)
+- `forgot-password` view: email input + "Send Reset Link" submit + "Back to sign in"
+- `reset-password` view: new password input + "Reset Password" submit + "Back to sign in"
+- `AuthCard` component extended with optional `footer` prop
+
+### Tests (tests/test_password_reset.py — 13 new tests, all passing)
+- `POST /forgot-password`: registered email sends email, unknown email returns 200 without
+  sending, invalid email returns 400, missing email returns 400, token stored on user
+- `POST /reset-password`: valid token succeeds, token cleared after use, invalid token → 400,
+  expired token → 400, token cannot be reused, weak password → 400, missing fields → 400,
+  new password works for subsequent login (end-to-end)
+
+### Overall Status (2026-06-24)
+- **Total Tests**: 112 (passing: 112, failing: 0)
+  - test_auth.py: 14, test_config.py: 3, test_email.py: 1, test_manager.py: 5,
+    test_models.py: 4, test_password_reset.py: 13, test_password_verification.py: 38,
+    test_responses.py: 2, test_security.py: 20, test_user.py: 3, test_validation.py: 9
+- **Migrations**: 3 total (001 initial schema, 002 OTP fields, 003 password reset fields)
+
+---
+
 ## 2026-06-23 — Email-Based 2FA Fully Implemented
 
 ### Two-Factor Authentication

@@ -9,9 +9,11 @@ from flask_login import current_user, login_required, login_user, logout_user
 
 from ..services.auth import AccountLockedError, AuthError, AuthService
 from ..services.validation import (
+    ForgotPasswordData,
     LoginData,
     OtpData,
     RegisterData,
+    ResetPasswordData,
     ValidationError,
     ValidationService,
 )
@@ -117,6 +119,42 @@ def verify_email() -> tuple[dict[str, object], int]:
         return error_response(str(exc), 400)
 
     return {"message": "Email verified. You may now sign in."}, 200
+
+
+@auth_bp.post("/forgot-password")
+def forgot_password() -> tuple[dict[str, object], int]:
+    """Sends a password reset email to the provided address if it is registered.
+
+    Always returns HTTP 200 regardless of whether the email exists to avoid
+    leaking account information.
+    """
+
+    payload = request.get_json(silent=True)
+    try:
+        data: ForgotPasswordData = validation_service.parse_forgot_password_payload(payload)
+    except ValidationError as exc:
+        return validation_error_response(str(exc))
+
+    auth_service.request_password_reset(data.email)
+    return {
+        "message": "If that email is registered, a password reset link has been sent."
+    }, 200
+
+
+@auth_bp.post("/reset-password")
+def reset_password_route() -> tuple[dict[str, object], int]:
+    """Resets a user's password using a valid reset token."""
+
+    payload = request.get_json(silent=True)
+    try:
+        data: ResetPasswordData = validation_service.parse_reset_password_payload(payload)
+        auth_service.reset_password(data.token, data.new_password)
+    except ValidationError as exc:
+        return validation_error_response(str(exc))
+    except AuthError as exc:
+        return error_response(str(exc), 400)
+
+    return {"message": "Password reset successful. You may now sign in."}, 200
 
 
 @auth_bp.post("/logout")

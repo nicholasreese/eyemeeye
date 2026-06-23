@@ -73,6 +73,34 @@ class OtpData:
 
 
 @dataclass(frozen=True)
+class ForgotPasswordData:
+    """Validated payload for password reset request."""
+
+    email: str
+
+    def __post_init__(self) -> None:
+        """Validates the email field."""
+
+        if not _is_valid_email(self.email):
+            raise ValidationError("email must be a valid email address")
+
+
+@dataclass(frozen=True)
+class ResetPasswordData:
+    """Validated payload for password reset submission."""
+
+    token: str
+    new_password: str
+
+    def __post_init__(self) -> None:
+        """Validates the token and new password fields."""
+
+        if not self.token:
+            raise ValidationError("token is required")
+        _validate_password_complexity(self.new_password)
+
+
+@dataclass(frozen=True)
 class StatusUpdateData:
     """Validated payload for user status update requests."""
 
@@ -160,6 +188,33 @@ class ValidationService:
         return OtpData(
             username=str(data["username"]).strip(),
             otp=str(data["otp"]).strip(),
+        )
+
+    @staticmethod
+    def parse_forgot_password_payload(
+        payload: Mapping[str, Any] | None,
+    ) -> ForgotPasswordData:
+        """Parses and validates forgot-password payload content."""
+
+        data = ValidationService.ensure_json_payload(payload)
+        if "email" not in data:
+            raise ValidationError("Missing required fields: email")
+        return ForgotPasswordData(email=str(data["email"]).strip())
+
+    @staticmethod
+    def parse_reset_password_payload(
+        payload: Mapping[str, Any] | None,
+    ) -> ResetPasswordData:
+        """Parses and validates reset-password payload content."""
+
+        data = ValidationService.ensure_json_payload(payload)
+        missing = {"token", "new_password"} - data.keys()
+        if missing:
+            field_list = ", ".join(sorted(missing))
+            raise ValidationError(f"Missing required fields: {field_list}")
+        return ResetPasswordData(
+            token=str(data["token"]).strip(),
+            new_password=str(data["new_password"]),
         )
 
     @staticmethod

@@ -1,6 +1,41 @@
-## Current Status: All Four Phases Complete — 2FA Fully Implemented
+## Current Status: All Four Phases Complete — Password Reset Added
 
-### What Was Just Done (2026-06-23)
+### What Was Just Done (2026-06-24)
+
+#### Forgot Password / Password Reset Flow
+Full end-to-end password reset feature added to both backend and frontend.
+
+**Reset flow:**
+1. User clicks "Forgot password?" on login → `forgot-password` view
+2. `POST /api/auth/forgot-password` with `{email}` — always returns HTTP 200 (no account enumeration);
+   if email is registered, stores a `secrets.token_urlsafe(32)` token + 1-hour expiry, sends email
+3. Email link: `{host}/?reset_token=TOKEN` → SPA detects on load, strips from URL bar, shows
+   `reset-password` view
+4. `POST /api/auth/reset-password` with `{token, new_password}` — validates expiry, updates hash,
+   clears token; invalid/expired token → HTTP 400
+
+**Backend components added:**
+- `User.password_reset_token` and `User.password_reset_expires_at` columns
+- Alembic migration `003_add_password_reset_fields.py`
+- `SecurityService.generate_reset_token()` — `secrets.token_urlsafe(32)`
+- `AuthService.request_password_reset(email)` and `AuthService.reset_password(token, new_password)`
+- `send_password_reset_email(email, token)` in `email.py`
+- `ForgotPasswordData`, `ResetPasswordData` dataclasses + parsers in `validation.py`
+- `POST /api/auth/forgot-password` and `POST /api/auth/reset-password` routes
+
+**Frontend components added (App.tsx):**
+- `View` type: `"forgot-password"` and `"reset-password"` added
+- `useEffect` checks `?reset_token=` on page load; strips param, stores in state
+- `forgotEmail`, `resetToken`, `resetNewPassword` states
+- `handleForgotPassword`, `handleResetPassword` handlers
+- "Forgot password?" link on login view (via `AuthCard` optional `footer` prop)
+- `forgot-password` and `reset-password` view JSX
+
+**Tests:** 13 new tests in `tests/test_password_reset.py` — all passing (112 total)
+
+---
+
+### What Was Done (2026-06-23)
 
 #### Email-Based Two-Factor Authentication (2FA)
 Full end-to-end 2FA using email OTP implemented across backend and frontend.
@@ -75,13 +110,11 @@ Full end-to-end 2FA using email OTP implemented across backend and frontend.
 ### Known Remaining Issues
 - In-memory rate limiter not suitable for multi-process production (use Redis)
 - Account unlock requires manual admin intervention (no expiry timer, no unlock endpoint)
-- No password reset / account recovery flow
 - No admin UI for viewing audit logs
 - Sphinx produces HTML only; PDF requires LaTeX toolchain
 - venv in repo is Linux-built (x86_64 ELF); macOS requires system Python (3.13)
 
 ### Immediate Next Steps (if continuing)
-- Add password reset / account recovery endpoint (email token flow)
 - Add Redis-backed rate limiter for production
 - Add admin audit log viewer endpoint + UI panel
 - Add account unlock endpoint for admins

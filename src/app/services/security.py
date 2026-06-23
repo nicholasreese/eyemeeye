@@ -129,6 +129,15 @@ class SecurityService:
 
         return pyotp.random_base32()
 
+    def generate_reset_token(self) -> str:
+        """Generates a cryptographically secure URL-safe password reset token.
+
+        Returns:
+            str: 32-byte URL-safe token string.
+        """
+
+        return secrets.token_urlsafe(32)
+
     def generate_email_otp(self) -> tuple[str, str]:
         """Generates a 6-digit email OTP and returns the plaintext and its hash.
 

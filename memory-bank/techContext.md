@@ -5,7 +5,7 @@
 - **Web Framework**: Flask 3.x with SQLAlchemy ORM
 - **Frontend**: React 18 + TypeScript (Vite 5)
 - **Database**: SQLite (development/testing), PostgreSQL (production)
-- **Migrations**: Alembic 1.13 (two migrations: 001 initial schema, 002 OTP fields)
+- **Migrations**: Alembic 1.13 (three migrations: 001 initial schema, 002 OTP fields, 003 password reset fields)
 - **Security Libraries**: argon2-cffi, Flask-Talisman, Flask-WTF, Flask-Limiter
 - **Email**: Flask-Mail (SMTP delivery; suppressed in tests via MAIL_SUPPRESS_SEND)
 - **Testing**: pytest 8.2 + pytest-cov
@@ -106,6 +106,8 @@ make ci               lint + format + typecheck + test + security (all CI checks
 - is_email_verified (bool, default false)
 - **otp_code_hash** (nullable String 255 — Argon2 hash of pending email OTP)
 - **otp_expires_at** (nullable DateTime — UTC expiry of the pending OTP)
+- **password_reset_token** (nullable String 64 — plaintext reset token, single-use)
+- **password_reset_expires_at** (nullable DateTime — UTC expiry, 1 hour from issue)
 - created_at
 
 ### phone_status_history
@@ -118,6 +120,7 @@ make ci               lint + format + typecheck + test + security (all CI checks
 ### Alembic Migrations
 - `001_initial_schema.py` — creates all three tables with enum types and FK cascade
 - `002_add_email_otp_fields.py` — adds otp_code_hash + otp_expires_at to users
+- `003_add_password_reset_fields.py` — adds password_reset_token + password_reset_expires_at to users
 
 ## API Surface
 
@@ -135,6 +138,8 @@ make ci               lint + format + typecheck + test + security (all CI checks
   → 429 if account locked
 - `GET /verify-email?token=<tok>` — verifies email address
   → 200 on success, 400 on bad/missing token
+- `POST /forgot-password` — `{email}` — always 200; sends reset link if email registered
+- `POST /reset-password` — `{token, new_password}` — 200 on success, 400 on invalid/expired token
 - `POST /logout` — requires authentication
 
 ### /api/users (CSRF-exempt, login required)
@@ -189,7 +194,7 @@ make ci               lint + format + typecheck + test + security (all CI checks
 - Default: 100 requests/hour per IP
 - Production recommendation: Configure Redis storage backend
 
-## Test Suite (99 tests, 10 modules)
+## Test Suite (112 tests, 11 modules)
 | File | Tests | Coverage focus |
 |---|---|---|
 | test_auth.py | 14 | Registration, email verification, two-step login, OTP expiry/invalid, RBAC |
@@ -197,6 +202,7 @@ make ci               lint + format + typecheck + test + security (all CI checks
 | test_email.py | 1 | `send_verification_email` calls `mail.send` with correct recipient |
 | test_manager.py | 5 | Manager/admin endpoints |
 | test_models.py | 4 | UserProfile, PhoneStatusRecord dataclasses |
+| test_password_reset.py | 13 | Forgot password, reset token valid/expired/reused, weak password, end-to-end login |
 | test_password_verification.py | 38 | Argon2 hash/verify, complexity rules, extended chars |
 | test_responses.py | 2 | error_response, validation_error_response |
 | test_security.py | 20 | Complexity validation, account lockout, audit logging |
@@ -231,7 +237,6 @@ client.post("/api/auth/verify-otp", json={"username": ..., "otp": captured_otp})
 ## Known Issues / Technical Debt
 - In-memory rate limiter: not suitable for multi-worker or multi-process production
 - Account unlock: requires manual DB intervention, no admin endpoint or auto-expiry
-- No password reset / account recovery flow
 - Sphinx produces HTML only; PDF output requires LaTeX toolchain (not configured)
 - venv in repo is Linux-built (x86_64 ELF); macOS requires system Python (3.13)
 - `two_factor_secret` still stored per user (pyotp dep retained); not used in login

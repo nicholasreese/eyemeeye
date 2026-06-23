@@ -11,7 +11,7 @@ from sqlalchemy.exc import IntegrityError
 
 from ..extensions import db
 from ..models import PhoneStatus, Role, User
-from ..utils.email import send_login_otp, send_verification_email
+from ..utils.email import send_login_otp, send_password_reset_email, send_verification_email
 from .auditing import SecurityAuditService
 from .security import PasswordComplexityError, SecurityService
 
@@ -246,6 +246,56 @@ class AuthService:
         self._audit.log_successful_login(username)
 
         return cast(User, user)
+
+    def request_password_reset(self, email: str) -> None:
+        """Generates a password reset token and emails it to the user.
+
+        Silently no-ops if the email is not registered to avoid leaking
+        account existence.
+
+        Args:
+            email (str): Email address of the account to reset.
+        """
+
+        user = User.query.filter_by(email=email).one_or_none()
+        if not user:
+            return
+
+        token = self._security.generate_reset_token()
+        user.password_reset_token = token
+        user.password_reset_expires_at = datetime.utcnow() + timedelta(hours=1)
+        db.session.commit()
+        send_password_reset_email(email, token)
+
+    def reset_password(self, token: str, new_password: str) -> None:
+        """Resets a user's password using a valid reset token.
+
+        Args:
+            token (str): Password reset token from the email link.
+            new_password (str): New password to set (must meet complexity requirements).
+
+        Raises:
+            AuthError: If the token is invalid or expired.
+        """
+
+        user = User.query.filter_by(password_reset_token=token).one_or_none()
+        if not user or not user.password_reset_expires_at:
+            raise AuthError("Invalid or expired password reset link.")
+
+        if datetime.utcnow() > user.password_reset_expires_at:
+            user.password_reset_token = None
+            user.password_reset_expires_at = None
+            db.session.commit()
+            raise AuthError("Password reset link has expired. Please request a new one.")
+
+        try:
+            user.password_hash = self._security.hash_password(new_password)
+        except Exception as exc:
+            raise AuthError(str(exc)) from exc
+
+        user.password_reset_token = None
+        user.password_reset_expires_at = None
+        db.session.commit()
 
     def verify_email_token(self, token: str) -> None:
         """Marks the user's email as verified using their registration token.

@@ -12,7 +12,7 @@ import type {
 
 import "./App.css";
 
-type View = "loading" | "login" | "register" | "otp" | "dashboard";
+type View = "loading" | "login" | "register" | "otp" | "dashboard" | "forgot-password" | "reset-password";
 
 interface LoginForm {
   username: string;
@@ -62,6 +62,9 @@ export default function App() {
   const [view, setView] = useState<View>("loading");
   const [pendingUsername, setPendingUsername] = useState<string>("");
   const [otpCode, setOtpCode] = useState<string>("");
+  const [forgotEmail, setForgotEmail] = useState<string>("");
+  const [resetToken, setResetToken] = useState<string>("");
+  const [resetNewPassword, setResetNewPassword] = useState<string>("");
   const [loginForm, setLoginForm] = useState<LoginForm>(EMPTY_LOGIN);
   const [registerForm, setRegisterForm] = useState<RegisterForm>(EMPTY_REGISTER);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -80,6 +83,14 @@ export default function App() {
   const isAdmin = profile?.role === "admin";
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("reset_token");
+    if (token) {
+      setResetToken(token);
+      window.history.replaceState({}, "", window.location.pathname);
+      setView("reset-password");
+      return;
+    }
     void loadProfile();
   }, []);
 
@@ -312,6 +323,40 @@ export default function App() {
     }
   };
 
+  const handleForgotPassword = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+    event.preventDefault();
+    try {
+      const response = await apiPost("/api/auth/forgot-password", { email: forgotEmail });
+      const payload: { message: string } = await response.json();
+      addNotification("info", payload.message ?? "If that email is registered, a reset link has been sent.");
+      setForgotEmail("");
+      setView("login");
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const handleResetPassword = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+    event.preventDefault();
+    try {
+      const response = await apiPost("/api/auth/reset-password", {
+        token: resetToken,
+        new_password: resetNewPassword,
+      });
+      const payload: { message: string } = await response.json();
+      if (!response.ok) {
+        addNotification("error", payload.message ?? "Password reset failed.");
+        return;
+      }
+      addNotification("info", payload.message ?? "Password reset successful. Please sign in.");
+      setResetToken("");
+      setResetNewPassword("");
+      setView("login");
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   const updateLoginForm = (event: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = event.target;
     setLoginForm((prev) => ({ ...prev, [name]: value } as LoginForm));
@@ -356,6 +401,17 @@ export default function App() {
           switchLabel="No account?"
           switchAction="Register"
           onSwitch={() => setView("register")}
+          footer={
+            <p className="auth-switch">
+              <button
+                type="button"
+                className="auth-link"
+                onClick={() => setView("forgot-password")}
+              >
+                Forgot password?
+              </button>
+            </p>
+          }
         >
           <AuthField label="Username">
             <input
@@ -491,6 +547,81 @@ export default function App() {
         </div>
       )}
 
+      {view === "forgot-password" && (
+        <div className="auth-container">
+          <form
+            onSubmit={(e) => { void handleForgotPassword(e); }}
+            className="auth-form"
+          >
+            <h2 className="auth-title">Reset Password</h2>
+            <p className="auth-hint">
+              Enter your account email address and we'll send a reset link.
+            </p>
+            <label className="auth-field">
+              Email
+              <input
+                type="email"
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                required
+                autoFocus
+                placeholder="you@example.com"
+              />
+            </label>
+            <button type="submit" className="button auth-submit">
+              Send Reset Link
+            </button>
+            <p className="auth-switch">
+              <button
+                type="button"
+                className="auth-link"
+                onClick={() => { setForgotEmail(""); setView("login"); }}
+              >
+                Back to sign in
+              </button>
+            </p>
+          </form>
+        </div>
+      )}
+
+      {view === "reset-password" && (
+        <div className="auth-container">
+          <form
+            onSubmit={(e) => { void handleResetPassword(e); }}
+            className="auth-form"
+          >
+            <h2 className="auth-title">Set New Password</h2>
+            <p className="auth-hint">
+              Choose a new password for your account.
+            </p>
+            <label className="auth-field">
+              New Password
+              <input
+                type="password"
+                value={resetNewPassword}
+                onChange={(e) => setResetNewPassword(e.target.value)}
+                required
+                autoFocus
+                minLength={8}
+                placeholder="8–128 chars, upper, lower, digit &amp; special"
+              />
+            </label>
+            <button type="submit" className="button auth-submit">
+              Reset Password
+            </button>
+            <p className="auth-switch">
+              <button
+                type="button"
+                className="auth-link"
+                onClick={() => { setResetToken(""); setResetNewPassword(""); setView("login"); }}
+              >
+                Back to sign in
+              </button>
+            </p>
+          </form>
+        </div>
+      )}
+
       {view === "dashboard" && profile && (
         <Dashboard
           profile={profile}
@@ -522,6 +653,7 @@ interface AuthCardProps {
   switchLabel: string;
   switchAction: string;
   onSwitch: () => void;
+  footer?: React.ReactNode;
   children: React.ReactNode;
 }
 
@@ -531,6 +663,7 @@ function AuthCard({
   switchLabel,
   switchAction,
   onSwitch,
+  footer,
   children,
 }: AuthCardProps) {
   return (
@@ -547,6 +680,7 @@ function AuthCard({
             {switchAction}
           </button>
         </p>
+        {footer}
       </form>
     </div>
   );

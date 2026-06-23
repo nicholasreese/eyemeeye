@@ -32,26 +32,31 @@
 ### 3. Models Layer
 - **ORM Models**: SQLAlchemy declarative base with relationships
   - `User`: accounts with password hash, two_factor_secret, email verification
-    token, OTP code hash, OTP expiry
+    token, OTP code hash, OTP expiry, password reset token, password reset expiry
   - `PhoneStatusHistory`: immutable audit trail of status changes
   - `AuditLog`: security event tracking
 - **Domain Models**: Dataclasses used for validation
-  - `RegisterData`, `LoginData`, `OtpData`, `StatusUpdateData`, `RoleUpdateData`,
-    `UserUpdateData` — post-init validation with `ValidationError`
+  - `RegisterData`, `LoginData`, `OtpData`, `ForgotPasswordData`, `ResetPasswordData`,
+    `StatusUpdateData`, `RoleUpdateData`, `UserUpdateData` — post-init validation with
+    `ValidationError`
   - `UserProfile`, `PhoneStatusRecord` — domain data validation
 
 ### 4. Frontend Layer
 - **File**: `src/frontend/src/App.tsx`
-- **Pattern**: View state machine — `type View = "loading" | "login" | "register" | "otp" | "dashboard"`
+- **Pattern**: View state machine — `type View = "loading" | "login" | "register" | "otp" | "dashboard" | "forgot-password" | "reset-password"`
 - **Session detection**: `GET /api/users/me` → 401 → switch to `"login"` view
+- **Reset token detection**: `useEffect` checks `window.location.search` for `?reset_token=`;
+  if found, stores token in state, strips from URL bar, switches to `"reset-password"` view
 - **Auth flows**:
   - Login step 1: `POST /api/auth/login` → 202 + `requires_otp` → transition to `"otp"` view
   - Login step 2: `POST /api/auth/verify-otp` → 200 → `loadProfile()` → `"dashboard"` view
   - Register: `POST /api/auth/register` → 201 → info notification → `"login"` view
+  - Forgot password: `POST /api/auth/forgot-password` → 200 → info notification → `"login"` view
+  - Reset password: `POST /api/auth/reset-password` → 200 → info notification → `"login"` view
   - Logout: `POST /api/auth/logout` → `"login"` view
-- **State**: `pendingUsername` stored between login steps 1 and 2
-- **Sub-components**: `AuthCard`, `AuthField`, `Dashboard`, `ManagedUsersSection`,
-  `UserDetailCard` — each focused on a single view section
+- **State**: `pendingUsername` (OTP flow), `forgotEmail`, `resetToken`, `resetNewPassword`
+- **Sub-components**: `AuthCard` (with optional `footer` prop), `AuthField`, `Dashboard`,
+  `ManagedUsersSection`, `UserDetailCard` — each focused on a single view section
 - **Dev proxy**: Vite proxies `/api` → `http://localhost:5001` (not 5000; AirPlay
   on macOS occupies port 5000)
 
@@ -92,6 +97,8 @@ Return 200
   and PostgreSQL enum types; `downgrade()` drops enums explicitly
 - Migration 002: `alembic/versions/002_add_email_otp_fields.py` — adds
   `otp_code_hash` and `otp_expires_at` to users table
+- Migration 003: `alembic/versions/003_add_password_reset_fields.py` — adds
+  `password_reset_token` and `password_reset_expires_at` to users table
 
 ## Security Patterns
 
