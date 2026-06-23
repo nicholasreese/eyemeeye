@@ -1,100 +1,88 @@
-## Current Status: All Four Phases Complete — UI Polish
+## Current Status: All Four Phases Complete — 2FA Fully Implemented
 
-### What Was Just Done (2026-06-20)
+### What Was Just Done (2026-06-23)
 
-#### Frontend Branding & UI Polish
-- **Logo added**: `logo2.svg` copied to `src/frontend/public/images/` (Vite static dir)
-  and rendered as `<img className="site-logo">` centered at the top of every page
-  (loading, login, register, dashboard — it's in the root `<main>` shell).
-  CSS: `height: 144px; width: auto` (original 80px, scaled 80% bigger).
-  Wrapper margin-bottom reduced to `0.3rem` (was `1.5rem`, reduced 80%).
-- **Heading renamed**: "Phone Management Portal" → "EyeMeEye" (`<h1 className="page-title">`)
-- **Tagline added**: "Stop Mobile Phone Theft" as `<p className="page-tagline">` immediately
-  below the heading; font-size `1.6rem` (20% smaller than the `2rem` h1); centered;
-  muted colour (`#4a5568`).
-- **Heading centered**: `.page-title` now has `text-align: center`.
+#### Email-Based Two-Factor Authentication (2FA)
+Full end-to-end 2FA using email OTP implemented across backend and frontend.
 
-#### TypeScript Fixes
-- **`updateField` generic helper removed**: The `<T extends Record<string, string>>` generic
-  was causing persistent TS2345 inference errors at every call site. Replaced with two
-  concrete handlers: `updateLoginForm` and `updateRegisterForm` (each casts result `as T`
-  internally). All 8 call sites updated.
-- **`tsconfig.json` fix**: Removed `"ignoreDeprecations": "6.0"` — that flag requires TS 6+
-  but the project uses TS 5.4. Caused TS5103 error on `tsc --noEmit`.
-- `tsc --noEmit` now passes with **zero errors**.
+**Login flow changed from single-step to two-step:**
+1. `POST /api/auth/login` — validates password, checks email is verified, generates a
+   6-digit OTP, emails it to the user; returns HTTP 202 + `{"requires_otp": true}`
+2. `POST /api/auth/verify-otp` — verifies the hashed OTP, creates the authenticated
+   session; returns HTTP 200
 
-#### Dev Servers (current session)
-- Flask backend: `http://localhost:5001`
-  (`SECRET_KEY="dev-secret-key-for-testing" DATABASE_URL="sqlite:///app.db"`)
-- Vite frontend: `http://localhost:5174` (proxies `/api` → 5001)
-  (5174 because 5173 was already bound from a prior session)
+**Email verification now enforced:**
+- Registration issues a verification token; `GET /api/auth/verify-email?token=<tok>`
+  marks `is_email_verified = true`
+- Login step 1 returns HTTP 403 if email not yet verified
+
+**New backend components:**
+- `Flask-Mail==0.10.0` added to `requirements.txt`
+- `mail = Mail()` extension in `src/app/extensions.py`; initialized in app factory
+- `MAIL_*` config keys + `MAIL_SUPPRESS_SEND=testing` in `src/app/__init__.py`
+- `send_login_otp(email, otp)` and `send_verification_email(email, token)` in
+  `src/app/utils/email.py` using Flask-Mail (suppressed in tests)
+- `generate_email_otp() → (otp, otp_hash)` added to `SecurityService`
+- `generate_and_send_login_otp(user)`, `verify_login_otp(username, otp)`,
+  `verify_email_token(token)` added to `AuthService`
+- `OtpData` dataclass + `parse_otp_payload()` added to `ValidationService`
+- `User.otp_code_hash`, `User.otp_expires_at` columns added to model
+- Alembic migration `002_add_email_otp_fields.py`
+
+**New frontend components (App.tsx):**
+- `View` type extended: `"loading" | "login" | "register" | "otp" | "dashboard"`
+- States: `pendingUsername`, `otpCode`
+- `handleLogin` updated: detects `requires_otp: true`, transitions to `"otp"` view
+- `handleVerifyOtp`: POSTs to `/api/auth/verify-otp`, calls `loadProfile()` on success
+- OTP view JSX: "Check Your Email" form, 6-digit numeric input, "Back to sign in" link
+- Login form cleaned up: removed obsolete TOTP `token` field
+- `LoginForm` interface: `token` field removed
+
+**Tests updated (99 tests, all passing):**
+- `test_auth.py`: 14 tests — mock patch corrected to `src.app.services.auth.send_login_otp`
+- `test_email.py`: rewritten — `send_verification_email` tested with `mail.send` mocked
+  within a proper app context
+- `test_manager.py`, `test_user.py`, `test_security.py`: helpers updated to verify
+  email after registration and use the new two-step OTP login flow
+- `test_password_verification.py`: `_register` helper verifies email; success
+  assertions changed from HTTP 200 → 202
+- `test_validation.py`: removed stale `token=None` kwarg from `LoginData` call
 
 ---
 
-### What Was Just Done (2026-06-18)
+### What Was Done (2026-06-20)
 
-#### Phase 4 Gap Closure
-- ✅ **React login/register UI** — App.tsx fully rewritten with a `View` state machine
-  (`loading → login → dashboard`, or `register → login → dashboard`). Session
-  detection via `/api/users/me` returning 401. Sign-out button added. App split into
-  focused sub-components: `AuthCard`, `AuthField`, `Dashboard`, `ManagedUsersSection`,
-  `UserDetailCard`.
-- ✅ **CI/CD pipeline** — `.github/workflows/ci.yml` with separate `backend` and
-  `frontend` jobs. Backend: ruff lint + format-check, mypy, pytest with JUnit/coverage
-  XML artifacts, bandit, pip-audit. Frontend: npm ci + tsc --noEmit.
-- ✅ **Alembic migrations** — `alembic.ini`, `alembic/env.py` (Flask-SQLAlchemy
-  integration, reads `DATABASE_URL` env var), `alembic/script.py.mako`,
-  `alembic/versions/001_initial_schema.py` (creates all three tables with enum types
-  and FK cascade; downgrade drops PostgreSQL enums).
-- ✅ **Sphinx docs expanded** — `docs/conf.py` (theme, author, version, viewcode,
-  intersphinx), `docs/index.rst` (role/status tables, security overview),
-  `docs/installation.rst`, `docs/configuration.rst` (env var table, lockout/password
-  policies), `docs/usage.rst` (REST API reference, portal walkthrough, 2FA setup),
-  `docs/api.rst` (fixed module paths, added missing modules).
-- ✅ **Tooling updates** — `requirements.txt` gains alembic, bandit, pip-audit (sorted
-  alphabetically). Makefile gains `security`, `migrate`, `ci` targets.
+#### Frontend Branding & UI Polish
+- **Logo added**: `logo2.svg` in `src/frontend/public/images/`; height 144px (80% larger
+  than 80px); wrapper margin-bottom 0.3rem (80% tighter)
+- **Heading renamed**: "Phone Management Portal" → "EyeMeEye"
+- **Tagline added**: "Stop Mobile Phone Theft" at 1.6rem, centered, muted colour
 
-#### Bug Fix — Password Verification
-- **Root cause**: `SecurityService._PASSWORD_PATTERN` ended with
-  `[a-zA-Z\d@$!%*?&]{8,128}$` — a silent character whitelist that rejected passwords
-  containing `_`, `-`, space, `#`, `^`, `(`, `.`, etc. with the misleading error
-  "Password must contain uppercase, lowercase, digit, and special character". The
-  `validation.py` layer had no such whitelist, so passwords passed the first check but
-  failed the second.
-- **Fix**: Removed `_PASSWORD_PATTERN` from SecurityService; replaced with four
-  individual compiled regexes (one per rule) matching `validation.py`'s approach.
-  Each rule now produces a specific, accurate error message. Also removed
-  `# pragma: no cover` from `VerifyMismatchError` handler (now tested).
-- **Flask unauthorized handler**: Added `login_manager.unauthorized_handler` returning
-  `{"message": "Authentication required."}` with 401, so React fetch detects
-  unauthenticated state correctly (instead of following a 302 redirect).
-- **vite.config.ts**: Proxy changed from port 5000 to 5001 (5000 is AirPlay on macOS).
+#### TypeScript Fixes
+- Replaced generic `updateField<T>` (TS2345 errors) with two concrete handlers
+- Removed `"ignoreDeprecations": "6.0"` from tsconfig.json (invalid for TS 5.4)
+- `tsc --noEmit` passes with zero errors
 
-#### New Tests
-- `tests/test_password_verification.py` — 38 new tests in 5 classes:
-  `TestHashPassword`, `TestVerifyPassword`, `TestComplexityErrorMessages`,
-  `TestExtendedCharacterPasswords`, `TestRegistrationLoginRoundTrip`.
-- Total test suite: **93 tests, 93 passing**.
+---
 
-### Development Servers (started in this session)
+### Development Servers
 - Flask backend: `http://localhost:5001`
-  (started with `SECRET_KEY=dev-secret-key-for-testing DATABASE_URL=sqlite:///app.db`)
+  (`SECRET_KEY="dev-secret-key-for-testing" DATABASE_URL="sqlite:///app.db"`)
 - Vite frontend: `http://localhost:5173` (proxies `/api` → 5001)
-- Note: `.env` has `SECRET_KEY=your_secret_key` which is 15 chars — below the 16-char
-  minimum. Must set `SECRET_KEY` via env var when starting Flask locally.
+- Note: `.env` has `SECRET_KEY=your_secret_key` (15 chars — below 16-char minimum).
+  Must override via env var for local dev.
 
 ### Known Remaining Issues
-- `.env` placeholder SECRET_KEY is too short (15 chars, minimum is 16) — must override
-  via env var for local dev
-- In-memory rate limiter should be replaced with Redis for production
-- Account unlock requires manual admin intervention (no UI or automated expiry)
-- 2FA is optional (no enforce-2FA flag per user) — by design for current MVP
-- No account recovery / password reset flow
+- In-memory rate limiter not suitable for multi-process production (use Redis)
+- Account unlock requires manual admin intervention (no expiry timer, no unlock endpoint)
+- No password reset / account recovery flow
+- No admin UI for viewing audit logs
+- Sphinx produces HTML only; PDF requires LaTeX toolchain
+- venv in repo is Linux-built (x86_64 ELF); macOS requires system Python (3.13)
 
 ### Immediate Next Steps (if continuing)
-- Add a `/api/auth/verify-email/<token>` endpoint and wire up email verification status
-- Add password reset / account recovery endpoint
+- Add password reset / account recovery endpoint (email token flow)
 - Add Redis-backed rate limiter for production
 - Add admin audit log viewer endpoint + UI panel
-- PDF documentation output (`make docs` currently generates HTML only)
 - Add account unlock endpoint for admins
+- PDF documentation output (`make docs` currently generates HTML only)

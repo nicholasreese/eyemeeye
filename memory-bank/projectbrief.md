@@ -8,8 +8,8 @@ auditing, and a React-based portal for user, manager, and admin workflows.
 ## Core Features
 
 ### User Management
-- User registration with email verification token
-- Secure authentication with optional two-factor authentication (TOTP)
+- User registration with mandatory email verification (Flask-Mail sends real email)
+- Secure two-step authentication: password check → email OTP verification
 - Role-based access control: USER, MANAGER, ADMIN
 - Profile display (email, phone, IMEI, role)
 
@@ -28,7 +28,9 @@ auditing, and a React-based portal for user, manager, and admin workflows.
 ### Security
 - Password complexity enforcement (8–128 chars, mixed case, digits, special char)
 - Any additional characters permitted in passwords (no whitelist restriction)
-- Account lockout after 5 failed login attempts
+- Account lockout after 5 consecutive failures (password + OTP combined counter)
+- Email-based two-factor authentication (mandatory on every login)
+- Email verification enforced — login blocked until email confirmed
 - Security audit logging (login, role changes, unauthorized access)
 - HTTPS support with secure session cookies
 - CSRF protection and clickjacking prevention
@@ -38,18 +40,20 @@ auditing, and a React-based portal for user, manager, and admin workflows.
 - **Backend**: Python Flask 3.x with SQLAlchemy ORM
 - **Frontend**: React 18 + TypeScript (Vite), single-page application
 - **Database**: SQLite (dev/test), PostgreSQL (production via Alembic migrations)
-- **Security**: Argon2 (password hashing), pyotp (2FA), Flask-Talisman, Flask-WTF
-- **Migrations**: Alembic (schema management for PostgreSQL)
-- **Testing**: pytest — 93 tests across 10 modules
-- **Quality**: ruff (lint/format), mypy (strict type checking)
+- **Security**: Argon2 (password hashing + OTP hashing), Flask-Talisman, Flask-WTF
+- **Email**: Flask-Mail (SMTP; registration verification + login OTP delivery)
+- **Migrations**: Alembic (two migrations: initial schema + OTP fields)
+- **Testing**: pytest — 99 tests across 10 modules
+- **Quality**: ruff (lint/format), mypy (strict type checking), tsc --noEmit
 - **CI/CD**: GitHub Actions (backend + frontend jobs)
 - **Docs**: Sphinx (installation, configuration, usage, API reference)
 
-## Project Status (2026-06-18)
+## Project Status (2026-06-23)
 ✅ Phase 1: User Authentication — Complete
 ✅ Phase 2: User Management — Complete
 ✅ Phase 3: Security & Best Practices — Complete
 ✅ Phase 4: Frontend + Documentation + CI — Complete
+✅ 2FA: Email-based OTP (mandatory) — Complete
 
 ## Directory Layout
 ```
@@ -60,25 +64,30 @@ eyemeeye/
 │   ├── env.py
 │   ├── script.py.mako
 │   └── versions/
-│       └── 001_initial_schema.py
+│       ├── 001_initial_schema.py
+│       └── 002_add_email_otp_fields.py
 ├── src/
 │   ├── app/
-│   │   ├── __init__.py          # App factory
-│   │   ├── config.py            # AppConfig dataclass
-│   │   ├── extensions.py        # db, csrf, limiter, login_manager, talisman
-│   │   ├── models.py            # User, PhoneStatusHistory, AuditLog ORM models
+│   │   ├── __init__.py          # App factory (Flask-Mail config + init)
+│   │   ├── config.py            # AppConfig dataclass (incl. mail fields)
+│   │   ├── extensions.py        # db, csrf, limiter, login_manager, talisman, mail
+│   │   ├── models.py            # User (+ otp fields), PhoneStatusHistory, AuditLog
 │   │   ├── routes/              # auth, user, manager blueprints + responses
 │   │   ├── services/            # auth, security, auditing, user_management, validation
-│   │   └── utils/               # email utility
+│   │   └── utils/
+│   │       └── email.py         # send_verification_email, send_login_otp (Flask-Mail)
 │   └── frontend/
 │       └── src/
-│           ├── App.tsx          # React SPA (login, register, dashboard)
-│           ├── App.css          # Styles including auth forms
+│           ├── App.tsx          # React SPA (login→otp→dashboard state machine)
+│           ├── App.css          # Styles including auth/otp forms
 │           ├── main.tsx         # Entry point
 │           └── types.ts         # TypeScript interfaces
-├── tests/                       # 10 test modules, 93 tests
+├── tests/                       # 10 test modules, 99 tests
 ├── docs/                        # Sphinx documentation source
 ├── .github/workflows/ci.yml     # GitHub Actions CI pipeline
+├── docker-compose.yml           # Docker Compose (db + api + web services)
+├── Dockerfile                   # Flask API container
+├── nginx/                       # Nginx container (React build + /api proxy)
 ├── Makefile                     # make install/test/lint/typecheck/security/migrate/ci
-└── requirements.txt             # Python deps (incl. alembic, bandit, pip-audit)
+└── requirements.txt             # Python deps (incl. Flask-Mail, alembic, bandit, pip-audit)
 ```

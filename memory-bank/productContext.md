@@ -11,11 +11,10 @@ Users need a centralized, secure way to:
 
 ### Individual User (USER role)
 - Registers with username, email, phone number, IMEI, and password
-- Logs in (optionally with TOTP 2FA code)
+- Receives an email verification link; must verify before logging in
+- Logs in via two-step flow: password → email OTP (6-digit code, 10-min expiry)
 - Updates personal phone status (online → sold → stolen → disposed)
 - Views own status history
-- Receives email verification token on registration (email currently logs rather
-  than sends; no verified-email enforcement yet)
 
 ### Manager (MANAGER role)
 - Views all user profiles and phone status histories (read-only)
@@ -35,26 +34,30 @@ Users need a centralized, secure way to:
 ### Security Requirements
 - ✅ Password complexity enforcement (8–128 chars, mixed case, digits, special chars)
   — any additional characters also permitted (fixed 2026-06-18)
-- ✅ Account lockout mechanism (5 failed attempts → HTTP 429)
-- ✅ Two-factor authentication (TOTP-based, optional per login)
+- ✅ Account lockout mechanism (5 consecutive failed attempts → HTTP 429; counts
+  both password failures and OTP failures)
+- ✅ Email-based two-factor authentication (mandatory — a 6-digit OTP is emailed
+  on every login; TOTP is no longer used)
+- ✅ Email verification enforced — login blocked (403) until email confirmed
 - ✅ Secure communication (HTTPS/HSTS support via Flask-Talisman)
 - ✅ CSRF protection on all state-changing operations
 - ✅ Comprehensive audit logging (login, role changes, unauthorized access)
 - ✅ Security scanning in CI (bandit SAST, pip-audit CVE scan)
 
 ### Functional Requirements
-- ✅ User registration with email verification (token generated; send not implemented)
-- ✅ Secure login with optional 2FA
+- ✅ User registration with mandatory email verification (Flask-Mail sends real email)
+- ✅ Secure two-step login (password check → email OTP verification)
 - ✅ Phone status management (4 states: online, sold, stolen, disposed)
 - ✅ User profile display (username, email, phone, IMEI, role)
 - ✅ Manager view-only access and user status history
 - ✅ Admin user management capabilities (profile + role updates)
 - ✅ Role-based access control
-- ✅ Frontend portal: login, register, dashboard, manager panel, admin edit form
+- ✅ Frontend portal: login, OTP verification, register, dashboard, manager panel,
+  admin edit form
 
 ### Quality Requirements
-- ✅ Strict typing (mypy --strict configured)
-- ✅ 93 test cases across 10 test modules — all passing
+- ✅ Strict typing (mypy --strict configured; tsc --noEmit zero errors)
+- ✅ 99 test cases across 10 test modules — all passing
 - ✅ All linting checks passing (ruff)
 - ✅ Google-style docstrings on all functions/classes
 - ✅ Comprehensive error handling with specific exceptions
@@ -66,18 +69,17 @@ Users need a centralized, secure way to:
 - **Logo**: `logo2.svg` centered above the heading on every page
 
 ## Success Metrics (Current State)
-- 93 passing tests, 0 failures
+- 99 passing tests, 0 failures
 - All password character sets now accepted (underscore, hyphen, space, etc.)
-- React UI handles unauthenticated state with login/register forms
+- Two-step login with email OTP enforced for all users
+- Email verification required before first login
+- React UI: login → OTP → dashboard state machine
 - CI pipeline enforces lint, typecheck, test, and security scan on every push
-- Alembic handles schema migrations for PostgreSQL deployments
+- Alembic handles schema migrations (two migrations: initial schema + OTP fields)
 - Sphinx generates HTML API docs and usage guides
-- `tsc --noEmit` passes with zero errors
 
 ## Known Limitations
-- Email sending is a stub (logs intent, does not deliver mail)
-- 2FA is optional — no per-user "require 2FA" flag
-- Account unlock requires manual DB/admin intervention
+- Account unlock requires manual DB/admin intervention (no expiry timer, no endpoint)
 - No password reset / account recovery flow
 - Rate limiter uses in-memory storage (not suitable for multi-process production)
 - No admin UI for viewing audit logs
