@@ -56,6 +56,8 @@ def app() -> Iterator[Flask]:
         testing=True,
     )
     flask_app = create_app(config)
+    with flask_app.app_context():
+        db.create_all()
     yield flask_app
     with flask_app.app_context():
         db.drop_all()

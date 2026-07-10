@@ -7,6 +7,7 @@ from flask import Flask
 from ..config import AppConfig
 from ..extensions import csrf
 from .auth import auth_bp
+from .health import health_bp
 from .manager import manager_bp
 from .user import user_bp
 
@@ -14,6 +15,7 @@ from .user import user_bp
 def register_blueprints(app: Flask, config: AppConfig) -> None:
     """Registers API blueprints with the Flask application."""
 
+    app.register_blueprint(health_bp, url_prefix="/api")
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(user_bp, url_prefix="/api/users")
     app.register_blueprint(manager_bp, url_prefix="/api/manager")
@@ -21,3 +23,4 @@ def register_blueprints(app: Flask, config: AppConfig) -> None:
     csrf.exempt(auth_bp)
     csrf.exempt(user_bp)
     csrf.exempt(manager_bp)
+    csrf.exempt(health_bp)

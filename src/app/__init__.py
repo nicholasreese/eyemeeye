@@ -6,6 +6,7 @@ import logging
 from logging.config import dictConfig
 
 from flask import Flask
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .config import AppConfig, load_config
 from .extensions import csrf, db, limiter, login_manager, mail, talisman
@@ -45,6 +46,8 @@ def create_app(config: AppConfig | None = None) -> Flask:
 
     app_config = config or load_config()
     app = Flask(__name__, static_folder="../frontend/public")
+    # Trust one layer of nginx reverse-proxy headers (X-Forwarded-For, X-Forwarded-Proto)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)  # type: ignore[method-assign]
     app.config.update(
         SECRET_KEY=app_config.secret_key,
         SQLALCHEMY_DATABASE_URI=app_config.database_uri,
@@ -88,9 +91,6 @@ def create_app(config: AppConfig | None = None) -> Flask:
     login_manager.init_app(app)
 
     _configure_logging(app)
-
-    with app.app_context():
-        db.create_all()
 
     @login_manager.unauthorized_handler
     def _unauthorized() -> tuple[dict[str, str], int]:

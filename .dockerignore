@@ -1,0 +1,33 @@
+# Secrets — never bake into the image
+.env
+*.pem
+*.key
+
+# Python virtual environments
+.venv/
+venv/
+
+# Frontend build inputs (nginx Dockerfile handles this separately)
+src/frontend/node_modules/
+
+# Test and tooling artefacts
+htmlcov/
+.coverage
+coverage.xml
+junit.xml
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Dev / IDE
+.vscode/
+.DS_Store
+
+# Documentation source and build
+docs/
+memory-bank/
+
+# Git
+.git/
+.gitignore
