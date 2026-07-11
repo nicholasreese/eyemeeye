@@ -6,6 +6,7 @@ import os
 import sys
 from logging.config import fileConfig
 from pathlib import Path
+from urllib.parse import quote_plus, urlparse, urlunparse
 
 from alembic import context
 from dotenv import load_dotenv
@@ -27,6 +28,13 @@ database_url = os.getenv("DATABASE_URL", "sqlite:///app.db")
 # psycopg v3 requires the postgresql+psycopg:// dialect prefix; rewrite bare postgresql:// URLs.
 if database_url.startswith("postgresql://"):
     database_url = database_url.replace("postgresql://", "postgresql+psycopg://", 1)
+# Inject DB_PASSWORD (if provided) so passwords with URL-special chars (@, #, etc.) are safe.
+db_password = os.getenv("DB_PASSWORD", "")
+if db_password and database_url.startswith("postgresql"):
+    parsed = urlparse(database_url)
+    if not parsed.password:
+        netloc = f"{parsed.username}:{quote_plus(db_password)}@{parsed.hostname}:{parsed.port}"
+        database_url = urlunparse(parsed._replace(netloc=netloc))
 alembic_config.set_main_option("sqlalchemy.url", database_url)
 
 # Importing models registers their tables with db.metadata.
