@@ -84,7 +84,7 @@ def create_app(config: AppConfig | None = None) -> Flask:
     limiter.init_app(app)
     talisman.init_app(
         app,
-        force_https=app_config.enable_https,
+        force_https=False,  # nginx handles HTTP→HTTPS; redirecting here breaks internal health probes
         strict_transport_security=app_config.enable_https,
         session_cookie_secure=app_config.enable_https,
     )
