@@ -35,6 +35,33 @@ def test_user_profile_validates_email_format() -> None:
         )
 
 
+def test_user_profile_accepts_seven_digit_phone() -> None:
+    """UserProfile should accept phone numbers with 7 digits."""
+
+    profile = UserProfile(
+        username="valid",
+        email="user@example.com",
+        phone_number="7948524",
+        imei="12345678901234",
+        role=Role.USER,
+    )
+
+    assert profile.phone_number == "7948524"
+
+
+def test_user_profile_rejects_six_digit_phone() -> None:
+    """UserProfile should reject phone numbers shorter than 7 digits."""
+
+    with pytest.raises(ValueError, match="7"):
+        UserProfile(
+            username="valid",
+            email="user@example.com",
+            phone_number="123456",
+            imei="12345678901234",
+            role=Role.USER,
+        )
+
+
 def test_phone_status_record_defaults_timestamp() -> None:
     """PhoneStatusRecord should set noted_at to a timezone-aware timestamp."""
 

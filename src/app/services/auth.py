@@ -7,7 +7,7 @@ from typing import Iterable, Optional, Sequence, cast
 
 import pyotp
 from flask_login import UserMixin
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from ..extensions import db
 from ..models import PhoneStatus, Role, User
@@ -92,9 +92,12 @@ class AuthService:
         db.session.add(user)
         try:
             db.session.commit()
-        except IntegrityError as exc:  # pragma: no cover - DB constraint
+        except IntegrityError as exc:
             db.session.rollback()
             raise AuthError("Username or email already exists.") from exc
+        except SQLAlchemyError as exc:
+            db.session.rollback()
+            raise AuthError("Registration failed due to a database error.") from exc
 
         send_verification_email(email, verification_token)
 

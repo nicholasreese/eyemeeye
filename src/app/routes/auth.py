@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any, Callable, TypeVar, cast
+
+logger = logging.getLogger(__name__)
 
 from flask import Blueprint, request
 from flask_login import current_user, login_required, login_user, logout_user
@@ -46,6 +49,9 @@ def register() -> tuple[dict[str, object], int]:
         return validation_error_response(str(exc))
     except AuthError as exc:
         return error_response(str(exc), 400)
+    except Exception as exc:
+        logger.exception("Unexpected error during registration: %s", exc)
+        return error_response("Registration failed. Please try again.", 500)
 
     return {
         "message": (

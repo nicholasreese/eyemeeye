@@ -68,6 +68,50 @@ def test_register_data_validation_accepts_valid_payload() -> None:
     assert data.username == "validuser"
 
 
+def test_register_data_accepts_seven_digit_phone() -> None:
+    """RegisterData should accept phone numbers with exactly 7 digits."""
+
+    data = RegisterData(
+        username="validuser2",
+        email="valid2@example.com",
+        phone_number="7948524",
+        imei="12345678901234",
+        password="ValidPass@123",
+        role=Role.USER,
+    )
+
+    assert data.phone_number == "7948524"
+
+
+def test_register_data_rejects_six_digit_phone() -> None:
+    """RegisterData should reject phone numbers shorter than 7 digits."""
+
+    with pytest.raises(ValidationError, match="phone_number"):
+        RegisterData(
+            username="validuser3",
+            email="valid3@example.com",
+            phone_number="123456",
+            imei="12345678901234",
+            password="ValidPass@123",
+            role=Role.USER,
+        )
+
+
+def test_register_data_accepts_email_as_username() -> None:
+    """RegisterData should accept an email address as the username."""
+
+    data = RegisterData(
+        username="user@example.com",
+        email="user@example.com",
+        phone_number="7948524",
+        imei="12345678901234",
+        password="ValidPass@123",
+        role=Role.USER,
+    )
+
+    assert data.username == "user@example.com"
+
+
 def test_login_data_validation_rejects_missing_password() -> None:
     """LoginData should reject blank passwords."""
 

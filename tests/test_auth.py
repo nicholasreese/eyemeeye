@@ -74,6 +74,49 @@ def test_update_phone_status(client: FlaskClient) -> None:
     assert response.status_code == 200
 
 
+def test_register_with_seven_digit_phone_succeeds(client: FlaskClient) -> None:
+    response: TestResponse = client.post(
+        "/api/auth/register",
+        json={
+            "username": "shortphone",
+            "email": "shortphone@example.com",
+            "phone_number": "7948524",
+            "imei": "12345678901234",
+            "password": "Test@1234",
+        },
+    )
+    assert response.status_code == 201
+
+
+def test_register_with_six_digit_phone_fails(client: FlaskClient) -> None:
+    response: TestResponse = client.post(
+        "/api/auth/register",
+        json={
+            "username": "tooshort",
+            "email": "tooshort@example.com",
+            "phone_number": "123456",
+            "imei": "12345678901234",
+            "password": "Test@1234",
+        },
+    )
+    assert response.status_code == 400
+    assert "phone_number" in response.get_json()["message"]
+
+
+def test_register_with_email_as_username_succeeds(client: FlaskClient) -> None:
+    response: TestResponse = client.post(
+        "/api/auth/register",
+        json={
+            "username": "user@example.com",
+            "email": "user@example.com",
+            "phone_number": "7948524",
+            "imei": "12345678901234",
+            "password": "Test@1234",
+        },
+    )
+    assert response.status_code == 201
+
+
 def test_register_missing_fields_returns_validation_error(client: FlaskClient) -> None:
     response: TestResponse = client.post(
         "/api/auth/register",
