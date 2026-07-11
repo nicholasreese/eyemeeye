@@ -9,7 +9,7 @@ from pathlib import Path
 
 from alembic import context
 from dotenv import load_dotenv
-from sqlalchemy import engine_from_config, pool
+from sqlalchemy import create_engine, pool
 
 # Ensure the project root is importable so src.app can be resolved.
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -53,9 +53,8 @@ def run_migrations_offline() -> None:
 def run_migrations_online() -> None:
     """Run migrations against a live DB connection."""
 
-    connectable = engine_from_config(
-        alembic_config.get_section(alembic_config.config_ini_section, {}),
-        prefix="sqlalchemy.",
+    connectable = create_engine(
+        alembic_config.get_main_option("sqlalchemy.url"),  # type: ignore[arg-type]
         poolclass=pool.NullPool,
     )
     with connectable.connect() as connection:

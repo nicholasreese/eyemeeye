@@ -9,6 +9,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U eyemeeye"]
       interval: 5s
@@ -32,6 +34,8 @@ services:
       MAIL_USERNAME: ${MAIL_USERNAME}
       MAIL_PASSWORD: ${MAIL_PASSWORD}
       MAIL_SENDER: ${MAIL_SENDER:-noreply@eyemeeye.com}
+    networks:
+      - backend
     depends_on:
       db:
         condition: service_healthy
@@ -49,11 +53,17 @@ services:
       context: .
       dockerfile: nginx/Dockerfile
     restart: unless-stopped
+    networks:
+      - backend
     ports:
       - "${PORT:-80}:80"
     depends_on:
       api:
         condition: service_healthy
+
+networks:
+  backend:
+    driver: bridge
 
 volumes:
   postgres_data:
