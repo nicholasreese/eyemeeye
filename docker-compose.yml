@@ -57,7 +57,10 @@ services:
     networks:
       - backend
     ports:
-      - "${PORT:-80}:80"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /opt/docker/eyemeeye/certs:/etc/nginx/certs:ro
     depends_on:
       api:
         condition: service_healthy
