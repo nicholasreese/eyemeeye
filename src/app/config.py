@@ -43,6 +43,9 @@ def load_config() -> AppConfig:
 
     secret_key = os.getenv("SECRET_KEY", "dev-secret-key-change-me")
     database_uri = os.getenv("DATABASE_URL", "sqlite:///app.db")
+    # psycopg v3 requires the postgresql+psycopg:// dialect prefix; rewrite bare postgresql:// URLs.
+    if database_uri.startswith("postgresql://"):
+        database_uri = database_uri.replace("postgresql://", "postgresql+psycopg://", 1)
     environment = os.getenv("APP_ENV", os.getenv("FLASK_ENV", "development"))
     rate_limit = os.getenv("RATE_LIMIT", "100/hour")
     enable_https = os.getenv("ENABLE_HTTPS", "false").lower() == "true"

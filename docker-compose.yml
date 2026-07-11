@@ -22,7 +22,7 @@ services:
     restart: unless-stopped
     environment:
       SECRET_KEY: ${SECRET_KEY}
-      DATABASE_URL: postgresql://eyemeeye:${POSTGRES_PASSWORD}@db:5432/eyemeeye
+      DATABASE_URL: postgresql+psycopg://eyemeeye:${POSTGRES_PASSWORD}@db:5432/eyemeeye
       APP_ENV: production
       RATE_LIMIT: ${RATE_LIMIT:-100/hour}
       ENABLE_HTTPS: ${ENABLE_HTTPS:-false}

@@ -24,6 +24,9 @@ if alembic_config.config_file_name is not None:
 # Allow DATABASE_URL env var to override alembic.ini so local, CI, and
 # production environments each use the right connection string.
 database_url = os.getenv("DATABASE_URL", "sqlite:///app.db")
+# psycopg v3 requires the postgresql+psycopg:// dialect prefix; rewrite bare postgresql:// URLs.
+if database_url.startswith("postgresql://"):
+    database_url = database_url.replace("postgresql://", "postgresql+psycopg://", 1)
 alembic_config.set_main_option("sqlalchemy.url", database_url)
 
 # Importing models registers their tables with db.metadata.
