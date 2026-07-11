@@ -102,7 +102,7 @@ class User(_UserMixin, _BaseModel):
     phone_number = db.Column(db.String(20), nullable=False)
     imei = db.Column(db.String(20), nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    role = db.Column(SAEnum(Role), default=Role.USER, nullable=False)
+    role = db.Column(SAEnum(Role, values_callable=lambda obj: [e.value for e in obj]), default=Role.USER, nullable=False)
     two_factor_secret = db.Column(db.String(32), nullable=True)
     email_verification_token = db.Column(db.String(64), nullable=True)
     is_email_verified = db.Column(db.Boolean, default=False, nullable=False)
@@ -139,7 +139,7 @@ class PhoneStatusHistory(_BaseModel):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    status = db.Column(SAEnum(PhoneStatus), nullable=False)
+    status = db.Column(SAEnum(PhoneStatus, values_callable=lambda obj: [e.value for e in obj]), nullable=False)
     noted_at = db.Column(
         db.DateTime,
         default=lambda: datetime.now(tz=timezone.utc),
