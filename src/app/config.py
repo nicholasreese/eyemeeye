@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field
-from urllib.parse import quote_plus, urlparse, urlunparse
 
 from dotenv import load_dotenv
+
+from .utils.db_url import build_database_url
 
 load_dotenv()
 
@@ -43,17 +44,10 @@ def load_config() -> AppConfig:
     """Loads configuration values from environment variables."""
 
     secret_key = os.getenv("SECRET_KEY", "dev-secret-key-change-me")
-    database_uri = os.getenv("DATABASE_URL", "sqlite:///app.db")
-    # psycopg v3 requires the postgresql+psycopg:// dialect prefix; rewrite bare postgresql:// URLs.
-    if database_uri.startswith("postgresql://"):
-        database_uri = database_uri.replace("postgresql://", "postgresql+psycopg://", 1)
-    # Inject DB_PASSWORD (if provided) so passwords with URL-special chars (@, #, etc.) are safe.
-    db_password = os.getenv("DB_PASSWORD", "")
-    if db_password and database_uri.startswith("postgresql"):
-        parsed = urlparse(database_uri)
-        if not parsed.password:
-            netloc = f"{parsed.username}:{quote_plus(db_password)}@{parsed.hostname}:{parsed.port}"
-            database_uri = urlunparse(parsed._replace(netloc=netloc))
+    database_uri = build_database_url(
+        os.getenv("DATABASE_URL", "sqlite:///app.db"),
+        os.getenv("DB_PASSWORD", ""),
+    )
     environment = os.getenv("APP_ENV", os.getenv("FLASK_ENV", "development"))
     rate_limit = os.getenv("RATE_LIMIT", "100/hour")
     enable_https = os.getenv("ENABLE_HTTPS", "false").lower() == "true"

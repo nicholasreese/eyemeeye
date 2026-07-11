@@ -6,7 +6,6 @@ import os
 import sys
 from logging.config import fileConfig
 from pathlib import Path
-from urllib.parse import quote_plus, urlparse, urlunparse
 
 from alembic import context
 from dotenv import load_dotenv
@@ -22,20 +21,14 @@ alembic_config = context.config
 if alembic_config.config_file_name is not None:
     fileConfig(alembic_config.config_file_name)
 
-# Allow DATABASE_URL env var to override alembic.ini so local, CI, and
-# production environments each use the right connection string.
-database_url = os.getenv("DATABASE_URL", "sqlite:///app.db")
-# psycopg v3 requires the postgresql+psycopg:// dialect prefix; rewrite bare postgresql:// URLs.
-if database_url.startswith("postgresql://"):
-    database_url = database_url.replace("postgresql://", "postgresql+psycopg://", 1)
-# Inject DB_PASSWORD (if provided) so passwords with URL-special chars (@, #, etc.) are safe.
-db_password = os.getenv("DB_PASSWORD", "")
-if db_password and database_url.startswith("postgresql"):
-    parsed = urlparse(database_url)
-    if not parsed.password:
-        netloc = f"{parsed.username}:{quote_plus(db_password)}@{parsed.hostname}:{parsed.port}"
-        database_url = urlunparse(parsed._replace(netloc=netloc))
-alembic_config.set_main_option("sqlalchemy.url", database_url)
+from src.app.utils.db_url import build_database_url  # noqa: E402
+
+# Build the URL once; do NOT pass it to set_main_option — ConfigParser rejects % chars
+# (percent-encoded passwords trigger invalid interpolation syntax errors).
+database_url = build_database_url(
+    os.getenv("DATABASE_URL", "sqlite:///app.db"),
+    os.getenv("DB_PASSWORD", ""),
+)
 
 # Importing models registers their tables with db.metadata.
 from src.app.extensions import db  # noqa: E402
@@ -47,9 +40,8 @@ target_metadata = db.metadata
 def run_migrations_offline() -> None:
     """Run migrations without an active DB connection (generates SQL)."""
 
-    url = alembic_config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=url,
+        url=database_url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -62,7 +54,7 @@ def run_migrations_online() -> None:
     """Run migrations against a live DB connection."""
 
     connectable = create_engine(
-        alembic_config.get_main_option("sqlalchemy.url"),  # type: ignore[arg-type]
+        database_url,
         poolclass=pool.NullPool,
     )
     with connectable.connect() as connection:
