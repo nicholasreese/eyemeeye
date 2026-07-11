@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from datetime import datetime, timedelta
 from typing import Iterable, Optional, Sequence, cast
 
@@ -10,6 +11,8 @@ from flask_login import UserMixin
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from ..extensions import db
+
+logger = logging.getLogger(__name__)
 from ..models import PhoneStatus, Role, User
 from ..utils.email import send_login_otp, send_password_reset_email, send_verification_email
 from .auditing import SecurityAuditService
@@ -97,6 +100,7 @@ class AuthService:
             raise AuthError("Username or email already exists.") from exc
         except SQLAlchemyError as exc:
             db.session.rollback()
+            logger.exception("Database error during user registration: %s", exc)
             raise AuthError("Registration failed due to a database error.") from exc
 
         send_verification_email(email, verification_token)
