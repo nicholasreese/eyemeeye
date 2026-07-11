@@ -6,6 +6,7 @@ import logging
 from logging.config import dictConfig
 
 from flask import Flask
+from werkzeug.exceptions import HTTPException
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .config import AppConfig, load_config
@@ -97,6 +98,15 @@ def create_app(config: AppConfig | None = None) -> Flask:
         return {"message": "Authentication required."}, 401
 
     login_manager.user_loader(AuthService.load_user_by_id)
+
+    @app.errorhandler(HTTPException)
+    def handle_http_exception(exc: HTTPException) -> tuple[dict[str, str], int]:
+        return {"message": exc.description or "An error occurred."}, exc.code or 500
+
+    @app.errorhandler(Exception)
+    def handle_unhandled_exception(exc: Exception) -> tuple[dict[str, str], int]:
+        app.logger.exception("Unhandled exception: %s", exc)
+        return {"message": "An unexpected error occurred."}, 500
 
     register_blueprints(app, app_config)
 

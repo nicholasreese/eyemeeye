@@ -104,9 +104,9 @@ class UserManagementService:
             user.email = email
 
         if phone_number is not None:
-            if not phone_number.isdigit() or len(phone_number) < 10:
+            if not phone_number.isdigit() or len(phone_number) < 7:
                 raise UserManagementError(
-                    "Phone number must be numeric with 10+ digits."
+                    "Phone number must be numeric with 7–15+ digits."
                 )
             user.phone_number = phone_number
 

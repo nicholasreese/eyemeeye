@@ -70,8 +70,8 @@ class UserProfile:
             raise ValueError(msg)
         if "@" not in self.email:
             raise ValueError("Email address must contain '@'.")
-        if not self.phone_number.isdigit() or len(self.phone_number) < 10:
-            raise ValueError("Phone number must be numeric with 10+ digits.")
+        if not self.phone_number.isdigit() or len(self.phone_number) < 7:
+            raise ValueError("Phone number must be numeric with 7–15+ digits.")
         if len(self.imei) not in {14, 15}:
             raise ValueError("IMEI must be 14 or 15 digits long.")
 

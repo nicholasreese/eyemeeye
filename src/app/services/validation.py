@@ -33,8 +33,8 @@ class RegisterData:
             raise ValidationError("username must not exceed 80 characters")
         if not _is_valid_email(self.email):
             raise ValidationError("email must be a valid email address")
-        if not self.phone_number.isdigit() or len(self.phone_number) < 10:
-            raise ValidationError("phone_number must be numeric with 10+ digits")
+        if not self.phone_number.isdigit() or len(self.phone_number) < 7:
+            raise ValidationError("phone_number must be numeric with 7–15+ digits")
         if len(self.imei) not in {14, 15} or not self.imei.isdigit():
             raise ValidationError("imei must contain 14 or 15 numeric digits")
         _validate_password_complexity(self.password)
@@ -272,9 +272,9 @@ class ValidationService:
         if email is not None and not _is_valid_email(email):
             raise ValidationError("email must be a valid email address")
         if phone_number is not None and (
-            not phone_number.isdigit() or len(phone_number) < 10
+            not phone_number.isdigit() or len(phone_number) < 7
         ):
-            raise ValidationError("phone_number must be numeric with 10+ digits")
+            raise ValidationError("phone_number must be numeric with 7–15+ digits")
         if imei is not None and (len(imei) not in {14, 15} or not imei.isdigit()):
             raise ValidationError("imei must contain 14 or 15 numeric digits")
         return UserUpdateData(

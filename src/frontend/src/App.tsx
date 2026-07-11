@@ -444,15 +444,17 @@ export default function App() {
           onSwitch={() => setView("login")}
         >
           <AuthField label="Username">
-            <input
-              type="text"
-              name="username"
-              value={registerForm.username}
-              onChange={updateRegisterForm}
-              required
-              autoFocus
-              minLength={3}
-            />
+            <Tooltip content="Your username can be your email address.">
+              <input
+                type="text"
+                name="username"
+                value={registerForm.username}
+                onChange={updateRegisterForm}
+                required
+                autoFocus
+                minLength={3}
+              />
+            </Tooltip>
           </AuthField>
           <AuthField label="Email">
             <input
@@ -470,20 +472,31 @@ export default function App() {
               value={registerForm.phone_number}
               onChange={updateRegisterForm}
               required
-              placeholder="10+ digits"
+              placeholder="7–15+ digits"
             />
           </AuthField>
-          <AuthField label="IMEI">
-            <input
-              type="text"
-              name="imei"
-              value={registerForm.imei}
-              onChange={updateRegisterForm}
-              required
-              placeholder="14–15 digits"
-              minLength={14}
-              maxLength={15}
-            />
+          <AuthField label={<>IMEI <span className="imei-dial-code">*#06#</span></>}>
+            <Tooltip content={
+              <>
+                <p>To display your phone's unique 15-digit IMEI number on the screen, simply open your device's Phone/Calling app, dial *#06#, and a pop-up will instantly appear with the information.</p>
+                <p>If you need to find it in your phone's settings instead:</p>
+                <ul>
+                  <li><strong>iPhone:</strong> Go to Settings → General → About.</li>
+                  <li><strong>Android:</strong> Go to Settings → About Phone (or Status).</li>
+                </ul>
+              </>
+            }>
+              <input
+                type="text"
+                name="imei"
+                value={registerForm.imei}
+                onChange={updateRegisterForm}
+                required
+                placeholder="14–15 digits"
+                minLength={14}
+                maxLength={15}
+              />
+            </Tooltip>
           </AuthField>
           <AuthField
             label="Password"
@@ -687,7 +700,7 @@ function AuthCard({
 }
 
 interface AuthFieldProps {
-  label: string;
+  label: React.ReactNode;
   hint?: string;
   children: React.ReactNode;
 }
@@ -704,6 +717,20 @@ function AuthField({ label, hint, children }: AuthFieldProps) {
       )}
       {children}
     </label>
+  );
+}
+
+interface TooltipProps {
+  content: React.ReactNode;
+  children: React.ReactNode;
+}
+
+function Tooltip({ content, children }: TooltipProps) {
+  return (
+    <span className="tooltip-wrap">
+      {children}
+      <span className="tooltip-content" role="tooltip">{content}</span>
+    </span>
   );
 }
 

@@ -242,6 +242,59 @@
   font-size: inherit;
 }
 
+.imei-dial-code {
+  font-family: monospace;
+  font-size: 0.9em;
+  color: #64748b;
+  font-weight: 400;
+}
+
+.tooltip-wrap {
+  position: relative;
+  display: block;
+}
+
+.tooltip-content {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: #1e293b;
+  color: #f1f5f9;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.5;
+  z-index: 20;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  white-space: normal;
+}
+
+.tooltip-content p {
+  margin: 0 0 0.5rem;
+}
+
+.tooltip-content p:last-child {
+  margin-bottom: 0;
+}
+
+.tooltip-content ul {
+  margin: 0.25rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.tooltip-content li {
+  margin-bottom: 0.2rem;
+}
+
+.tooltip-wrap:hover .tooltip-content,
+.tooltip-wrap:focus-within .tooltip-content {
+  display: block;
+}
+
 @media (max-width: 768px) {
   .app {
     padding: 1.25rem;
