@@ -834,10 +834,10 @@ function Dashboard({
           </button>
         </div>
         <ul className="detail-list">
-          <li>Email: {profile.email}</li>
-          <li>Phone Number: {profile.phone_number}</li>
-          <li>IMEI: {profile.imei}</li>
-          <li>Role: {profile.role}</li>
+          <li><strong>Email:</strong> {profile.email}</li>
+          <li><strong>Phone Number:</strong> {profile.phone_number}</li>
+          <li><strong>IMEI:</strong> {profile.imei}</li>
+          <li><strong>Role:</strong> {profile.role}</li>
         </ul>
 
         <form onSubmit={onStatusUpdate} className="status-form">
