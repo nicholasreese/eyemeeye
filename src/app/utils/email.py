@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 
-from flask import request, url_for
+from flask import request
 from flask_mail import Message
 
 from ..extensions import mail
@@ -22,7 +22,8 @@ def send_verification_email(email: str, token: str) -> None:
 
     try:
         logger.info("Sending verification email to %s", email)
-        verify_url = url_for("auth.verify_email", token=token, _external=True)
+        base = request.host_url.rstrip("/")
+        verify_url = f"{base}/?verify_token={token}"
         msg = Message(
             subject="Verify your EyeMeEye email address",
             recipients=[email],

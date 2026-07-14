@@ -12,7 +12,7 @@ import type {
 
 import "./App.css";
 
-type View = "loading" | "login" | "register" | "otp" | "dashboard" | "forgot-password" | "reset-password";
+type View = "loading" | "login" | "register" | "otp" | "dashboard" | "forgot-password" | "reset-password" | "verify-email-pending";
 
 interface LoginForm {
   username: string;
@@ -82,13 +82,37 @@ export default function App() {
   );
   const isAdmin = profile?.role === "admin";
 
+  const handleEmailVerification = async (token: string): Promise<void> => {
+    try {
+      const response = await fetch(
+        `/api/auth/verify-email?token=${encodeURIComponent(token)}`,
+        { credentials: "include" },
+      );
+      const payload: { message: string } = await response.json();
+      if (response.ok) {
+        addNotification("info", "Email verified! You can now sign in.");
+      } else {
+        addNotification("error", payload.message ?? "Email verification failed.");
+      }
+    } catch {
+      addNotification("error", "Email verification failed. Please try again.");
+    }
+    setView("login");
+  };
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const token = params.get("reset_token");
-    if (token) {
-      setResetToken(token);
+    const resetTok = params.get("reset_token");
+    const verifyTok = params.get("verify_token");
+    if (resetTok) {
+      setResetToken(resetTok);
       window.history.replaceState({}, "", window.location.pathname);
       setView("reset-password");
+      return;
+    }
+    if (verifyTok) {
+      window.history.replaceState({}, "", window.location.pathname);
+      void handleEmailVerification(verifyTok);
       return;
     }
     void loadProfile();
@@ -192,9 +216,8 @@ export default function App() {
         addNotification("error", payload.message ?? "Registration failed");
         return;
       }
-      addNotification("info", "Account created — please sign in.");
       setRegisterForm(EMPTY_REGISTER);
-      setView("login");
+      setView("verify-email-pending");
     } catch (error) {
       handleError(error);
     }
@@ -512,6 +535,32 @@ export default function App() {
             />
           </AuthField>
         </AuthCard>
+      )}
+
+      {view === "verify-email-pending" && (
+        <div className="auth-container">
+          <div className="auth-form">
+            <h2 className="auth-title">Check Your Email</h2>
+            <p className="auth-hint">
+              Your account has been created. We&apos;ve sent a verification link
+              to your email address — please click it to activate your account
+              before signing in.
+            </p>
+            <p className="auth-hint">
+              If you don&apos;t see the email, check your spam or junk folder.
+            </p>
+            <p className="auth-switch">
+              Already verified?{" "}
+              <button
+                type="button"
+                className="auth-link"
+                onClick={() => setView("login")}
+              >
+                Sign In
+              </button>
+            </p>
+          </div>
+        </div>
       )}
 
       {view === "otp" && (
