@@ -59,11 +59,12 @@ Users need a centralized, secure way to:
 
 ### Quality Requirements
 - ✅ Strict typing (mypy --strict configured; tsc --noEmit zero errors)
-- ✅ 112 test cases across 11 test modules — all passing
+- ✅ 135 test cases across 11 test modules — all passing
 - ✅ All linting checks passing (ruff)
 - ✅ Google-style docstrings on all functions/classes
 - ✅ Comprehensive error handling with specific exceptions
 - ✅ Structured logging with context metadata
+- ✅ All API errors return JSON (global error handlers prevent HTML leaking to SPA)
 
 ## Branding
 - **Product name**: EyeMeEye (displayed as `<h1>` on all pages)

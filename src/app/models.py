@@ -63,7 +63,12 @@ class UserProfile:
     role: Role = Role.USER
 
     def __post_init__(self) -> None:
-        """Validates user profile data."""
+        """Validates user profile data.
+
+        Raises:
+            ValueError: If username < 3 chars, email lacks '@', phone is
+                non-numeric or shorter than 7 digits, or IMEI is not 14–15 digits.
+        """
 
         if len(self.username) < 3:
             msg = "Username must be at least 3 characters long."

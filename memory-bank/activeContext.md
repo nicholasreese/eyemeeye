@@ -1,4 +1,59 @@
-## Current Status: All Four Phases Complete — Password Reset Added
+## Current Status: All Four Phases Complete — Production Bug Fixes Applied (2026-07-14)
+
+### What Was Just Done (2026-07-14)
+
+#### Registration Flow — Production Bug Fixes
+
+Four bugs diagnosed and fixed by tracing Docker logs and running in-container diagnostics:
+
+**1. HTML error pages returned on unhandled exceptions**
+Flask's default error pages (HTML) were returned when any unhandled exception escaped,
+causing the React frontend to throw `"Unexpected token '<'"` when parsing the response as
+JSON. Fixed by adding global `HTTPException` and `Exception` handlers in `create_app()`
+that always return JSON:
+```python
+@app.errorhandler(HTTPException)
+def handle_http_exception(exc): return {"message": exc.description}, exc.code
+
+@app.errorhandler(Exception)
+def handle_unhandled_exception(exc): return {"message": "An unexpected error occurred."}, 500
+```
+
+**2. Phone number minimum lowered from 10 to 7 digits**
+Updated in all three validation layers: `RegisterData.__post_init__` (validation.py),
+`UserProfile.__post_init__` (models.py), and `parse_user_update_payload` (validation.py).
+Error message updated to "phone_number must be numeric with 7–15+ digits".
+
+**3. SQLAlchemyError not caught in register_user**
+Only `IntegrityError` was caught, leaving all other DB errors (OperationalError, DataError,
+etc.) to propagate as unhandled exceptions. Fixed by adding `except SQLAlchemyError` after
+the `IntegrityError` block in `auth.py` service, with `logger.exception()` so the raw
+error appears in the container logs. Route-level `except Exception` fallback also added.
+
+**4. SAEnum enum name vs value mismatch (root cause of DB error)**
+`SAEnum(Role)` and `SAEnum(PhoneStatus)` used the default SQLAlchemy behaviour of
+serializing Python enum `.name` attributes (e.g. `"USER"`, `"ONLINE"`) to PostgreSQL,
+but the PostgreSQL enum types were created with lowercase `.value` strings (e.g.
+`"user"`, `"online"`). Every INSERT failed with:
+`psycopg.errors.InvalidTextRepresentation: invalid input value for enum role: "USER"`
+
+Fixed by adding `values_callable=lambda obj: [e.value for e in obj]` to both `SAEnum`
+calls in `models.py`. No migration required — the DB enum types already have the correct
+lowercase values.
+
+#### Frontend UX Improvements
+- IMEI label updated to show `*#06#` shortcode hint
+- Hover tooltip added to IMEI input with iPhone/Android instructions for finding the IMEI
+- Hover tooltip added to username input noting that an email address may be used
+- Username input width fixed (was narrower than email due to `tooltip-wrap` span)
+- Phone number placeholder updated to "7–15+ digits"
+
+#### New Tests Added (135 total, all passing)
+- `test_models.py`: +2 (7-digit phone accepted, 6-digit phone rejected)
+- `test_validation.py`: +3 (7-digit phone, 6-digit phone rejection, email-as-username)
+- `test_auth.py`: +3 (7-digit phone HTTP 201, 6-digit phone HTTP 400, email-as-username HTTP 201)
+
+---
 
 ### What Was Just Done (2026-06-24)
 

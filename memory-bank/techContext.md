@@ -99,7 +99,7 @@ make ci               lint + format + typecheck + test + security (all CI checks
 ## Database Schema
 
 ### users
-- id (PK), username (unique, 3–80 chars), email (unique), phone_number, imei
+- id (PK), username (unique, 3–80 chars; email addresses accepted as username), email (unique), phone_number (7+ digits), imei (14–15 digits)
 - password_hash (Argon2), role (enum: user/manager/admin, default user)
 - two_factor_secret (base32, always generated — retained for possible future use)
 - email_verification_token (nullable — cleared after verification)
@@ -194,20 +194,21 @@ make ci               lint + format + typecheck + test + security (all CI checks
 - Default: 100 requests/hour per IP
 - Production recommendation: Configure Redis storage backend
 
-## Test Suite (112 tests, 11 modules)
+## Test Suite (135 tests, 11 modules)
+
 | File | Tests | Coverage focus |
 |---|---|---|
-| test_auth.py | 14 | Registration, email verification, two-step login, OTP expiry/invalid, RBAC |
+| test_auth.py | 17 | Registration (incl. 7-digit phone, email-as-username), email verification, two-step login, OTP expiry/invalid, RBAC |
 | test_config.py | 3 | AppConfig validation, env loading |
 | test_email.py | 1 | `send_verification_email` calls `mail.send` with correct recipient |
 | test_manager.py | 5 | Manager/admin endpoints |
-| test_models.py | 4 | UserProfile, PhoneStatusRecord dataclasses |
+| test_models.py | 6 | UserProfile (incl. 7-digit phone boundary), PhoneStatusRecord dataclasses |
 | test_password_reset.py | 13 | Forgot password, reset token valid/expired/reused, weak password, end-to-end login |
 | test_password_verification.py | 38 | Argon2 hash/verify, complexity rules, extended chars |
 | test_responses.py | 2 | error_response, validation_error_response |
 | test_security.py | 20 | Complexity validation, account lockout, audit logging |
 | test_user.py | 3 | User profile, status update, status history |
-| test_validation.py | 9 | Validators, RegisterData, LoginData, OtpData, UserUpdateData |
+| test_validation.py | 12 | Validators, RegisterData (incl. 7-digit phone, email-as-username), LoginData, OtpData, UserUpdateData |
 
 ### Test Helper Pattern (email-OTP login)
 All integration tests that log in follow this pattern:
@@ -233,6 +234,30 @@ with patch("src.app.services.auth.send_login_otp") as mock_send:
 client.post("/api/auth/verify-otp", json={"username": ..., "otp": captured_otp})
 # assert response.status_code == 200
 ```
+
+## SAEnum Enum Serialization (Important Gotcha)
+
+Both `User.role` and `PhoneStatusHistory.status` use `SAEnum` with `values_callable`:
+```python
+SAEnum(Role, values_callable=lambda obj: [e.value for e in obj])
+```
+This is required because SQLAlchemy's default behaviour serializes the Python enum
+`.name` (e.g. `"USER"`) rather than `.value` (e.g. `"user"`). The PostgreSQL enum
+types created by migrations use lowercase values, so without `values_callable` every
+INSERT raises `InvalidTextRepresentation`. If new enum columns are added, always
+include `values_callable`.
+
+## Global JSON Error Handlers
+
+`create_app()` registers two error handlers that ensure all API responses are JSON:
+```python
+@app.errorhandler(HTTPException)          # 4xx/5xx HTTP exceptions
+def handle_http_exception(exc): ...       # → {"message": ...}, exc.code
+
+@app.errorhandler(Exception)             # Any unhandled exception
+def handle_unhandled_exception(exc): ... # → {"message": "An unexpected error occurred."}, 500
+```
+Without these, Flask returns HTML error pages which the React SPA cannot parse.
 
 ## Known Issues / Technical Debt
 - In-memory rate limiter: not suitable for multi-worker or multi-process production

@@ -25,7 +25,14 @@ class RegisterData:
     role: Role
 
     def __post_init__(self) -> None:
-        """Performs field-level validation for registration data."""
+        """Performs field-level validation for registration data.
+
+        Raises:
+            ValidationError: If any field fails validation — username out of
+                range (3–80 chars), invalid email, phone not all-numeric or
+                shorter than 7 digits, IMEI not 14–15 digits, or password
+                that does not meet complexity requirements.
+        """
 
         if len(self.username) < 3:
             raise ValidationError("username must be at least 3 characters long")

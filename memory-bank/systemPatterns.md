@@ -169,7 +169,32 @@ def endpoint():
         return error_response(str(e), 403)
     except AuthError as e:
         return error_response(str(e), 401)
+    except Exception as e:
+        logger.exception("Unexpected error: %s", e)
+        return error_response("An error occurred. Please try again.", 500)
 ```
+
+Global fallback handlers in `create_app()` ensure any exception that escapes a route
+still returns JSON (not Flask's default HTML). These are defence-in-depth — routes
+should still catch their own exceptions for precise status codes and messages.
+
+## SAEnum Pattern (PostgreSQL Enum Columns)
+
+Always use `values_callable` when mapping a Python `Enum` class to a PostgreSQL native
+enum column, so SQLAlchemy serializes `.value` (lowercase) rather than `.name`
+(uppercase):
+```python
+from sqlalchemy import Enum as SAEnum
+
+role = db.Column(
+    SAEnum(MyEnum, values_callable=lambda obj: [e.value for e in obj]),
+    default=MyEnum.MEMBER,
+    nullable=False,
+)
+```
+The PostgreSQL enum type (created by Alembic migration) must use the same lowercase
+strings as the Python enum values. Without `values_callable`, inserts fail with
+`InvalidTextRepresentation: invalid input value for enum`.
 
 ## Login Route — Special Two-Step Pattern
 ```python

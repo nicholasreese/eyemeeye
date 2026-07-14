@@ -43,7 +43,13 @@ def _configure_logging(app: Flask) -> None:
 
 
 def create_app(config: AppConfig | None = None) -> Flask:
-    """Creates and configures the Flask application."""
+    """Creates and configures the Flask application.
+
+    Registers global error handlers so that all unhandled HTTP exceptions and
+    unexpected server errors return JSON instead of Flask's default HTML pages.
+    This is required for the React SPA frontend, which always expects JSON
+    from the API.
+    """
 
     app_config = config or load_config()
     app = Flask(__name__, static_folder="../frontend/public")

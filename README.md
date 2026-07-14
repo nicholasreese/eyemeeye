@@ -29,7 +29,7 @@ eyemeeye/
 │       └── src/
 │           ├── App.tsx            # SPA — login, register, dashboard
 │           └── types.ts           # TypeScript interfaces
-├── tests/                         # pytest — 112 tests across 11 modules
+├── tests/                         # pytest — 135 tests across 11 modules
 ├── docs/                          # Sphinx documentation source
 ├── .github/workflows/ci.yml       # GitHub Actions CI
 ├── Makefile                       # Developer shortcuts

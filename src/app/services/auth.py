@@ -60,10 +60,10 @@ class AuthService:
         """Registers a new user with validated profile data.
 
         Args:
-            username (str): Desired username.
+            username (str): Desired username (3–80 chars; email addresses accepted).
             email (str): User email address.
-            phone_number (str): User phone number.
-            imei (str): Device IMEI.
+            phone_number (str): Numeric phone number (7+ digits).
+            imei (str): Device IMEI (14 or 15 digits).
             password (str): User password (must meet complexity requirements).
             role (Role): Initial user role. Defaults to Role.USER.
 
@@ -71,7 +71,9 @@ class AuthService:
             User: Newly registered user object.
 
         Raises:
-            AuthError: If registration fails (duplicate username/email).
+            AuthError: If registration fails due to a duplicate username/email
+                (IntegrityError) or any other database error (SQLAlchemyError).
+                Database errors are logged at ERROR level before re-raising.
             PasswordComplexityError: If password does not meet requirements.
         """
 

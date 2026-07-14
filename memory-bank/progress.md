@@ -1,3 +1,39 @@
+## 2026-07-14 — Production Bug Fixes: Registration Flow
+
+### Root Cause: SAEnum name vs value mismatch
+SQLAlchemy's `SAEnum(Role)` and `SAEnum(PhoneStatus)` serialized Python enum `.name`
+attributes (`"USER"`, `"ONLINE"`) to PostgreSQL, but the DB enum types created by
+migrations use lowercase `.value` strings (`"user"`, `"online"`). Every INSERT into
+`users` or `phone_status_history` raised:
+`psycopg.errors.InvalidTextRepresentation: invalid input value for enum role: "USER"`
+
+**Fix**: Added `values_callable=lambda obj: [e.value for e in obj]` to both `SAEnum`
+calls in `models.py`. No migration required.
+
+### Other Registration Fixes
+- **HTML on errors**: Flask returned HTML for unhandled exceptions. Added global
+  `HTTPException` and `Exception` handlers in `create_app()` that always return JSON.
+- **Swallowed DB errors**: `register_user` only caught `IntegrityError`; all other
+  `SQLAlchemyError` subclasses escaped silently. Added broad `SQLAlchemyError` catch
+  with `logger.exception()` in the service layer and `except Exception` fallback in
+  the route with logging.
+- **Phone minimum 10 → 7 digits**: Updated in `RegisterData`, `UserProfile.__post_init__`,
+  and `parse_user_update_payload`.
+
+### Frontend UX Additions
+- `*#06#` shortcode added next to IMEI label
+- Hover tooltips on IMEI input (multi-paragraph IMEI finding instructions) and username
+  input ("your username can be your email address")
+- Username input width fixed — it was narrower than email due to `tooltip-wrap` span
+  wrapping; fixed with `width: 100%; box-sizing: border-box` on `.auth-field input`
+
+### Test Suite (135 total — 8 new tests)
+- `test_models.py`: +2 — 7-digit phone accepted, 6-digit phone rejected
+- `test_validation.py`: +3 — 7-digit phone, 6-digit phone rejection, email-as-username
+- `test_auth.py`: +3 — 7-digit phone → 201, 6-digit phone → 400, email-as-username → 201
+
+---
+
 ## 2026-06-24 — Forgot Password / Password Reset Implemented
 
 ### Forgot Password Feature

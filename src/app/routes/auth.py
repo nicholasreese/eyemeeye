@@ -32,7 +32,13 @@ validation_service = ValidationService()
 
 @auth_bp.post("/register")
 def register() -> tuple[dict[str, object], int]:
-    """Registers a new application user and sends a verification email."""
+    """Registers a new application user and sends a verification email.
+
+    Accepts JSON with username, email, phone_number (7+ digits), imei
+    (14–15 digits), and password. Returns HTTP 201 on success. All errors
+    — validation, duplicate account, or unexpected database failures — are
+    returned as JSON to avoid leaking HTML error pages to the client.
+    """
 
     payload = request.get_json(silent=True)
     try:
