@@ -823,6 +823,8 @@ function Dashboard({
       <section className="section">
         <div className="section-header">
           <h2 className="section-title">Welcome, {profile.username}</h2>
+        </div>
+        <div style={{ marginBottom: "1em" }}>
           <button
             type="button"
             className="button button--ghost"
