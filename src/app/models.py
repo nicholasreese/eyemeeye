@@ -49,6 +49,7 @@ class PhoneStatus(str, Enum):
     ONLINE = "online"
     SOLD = "sold"
     STOLEN = "stolen"
+    REPORTED_STOLEN = "reported_stolen"
     DISPOSED = "disposed"
 
 

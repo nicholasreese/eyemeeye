@@ -32,6 +32,7 @@ const STATUS_LABELS: Record<PhoneStatusValue, string> = {
   online: "Online",
   sold: "Sold",
   stolen: "Stolen",
+  reported_stolen: "Reported Stolen",
   disposed: "Disposed",
 };
 

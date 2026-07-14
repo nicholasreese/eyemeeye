@@ -1,6 +1,6 @@
 export type Role = "user" | "manager" | "admin";
 
-export type PhoneStatusValue = "online" | "sold" | "stolen" | "disposed";
+export type PhoneStatusValue = "online" | "sold" | "stolen" | "reported_stolen" | "disposed";
 
 export interface UserProfile {
   username: string;
