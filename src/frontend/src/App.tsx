@@ -863,7 +863,7 @@ function Dashboard({
           </button>
         </form>
 
-        <section>
+        <section className="status-history">
           <h3 className="section-title">Status History</h3>
           {statusHistory.length === 0 ? (
             <p>No status updates yet.</p>
