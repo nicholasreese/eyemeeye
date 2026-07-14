@@ -12,7 +12,8 @@ import type {
 
 import "./App.css";
 
-type View = "loading" | "login" | "register" | "otp" | "dashboard" | "forgot-password" | "reset-password" | "verify-email-pending";
+type View = "loading" | "login" | "register" | "otp" | "dashboard" | "forgot-password" | "reset-password" | "verify-email-pending" | "faq" | "howto" | "about-us";
+type InfoView = "faq" | "howto" | "about-us";
 
 interface LoginForm {
   username: string;
@@ -75,6 +76,7 @@ export default function App() {
   const [selectedUser, setSelectedUser] = useState<ManagedUserDetails | null>(null);
   const [adminForm, setAdminForm] = useState<ManagedUser | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [previousView, setPreviousView] = useState<View>("login");
 
   const isManager = useMemo(
     () => profile?.role === "manager" || profile?.role === "admin",
@@ -221,6 +223,13 @@ export default function App() {
     } catch (error) {
       handleError(error);
     }
+  };
+
+  const navigateToInfoPage = (target: InfoView): void => {
+    if (view !== "faq" && view !== "howto" && view !== "about-us") {
+      setPreviousView(view);
+    }
+    setView(target);
   };
 
   const handleLogout = async (): Promise<void> => {
@@ -399,6 +408,7 @@ export default function App() {
 
   return (
     <main className="app">
+      <HamburgerMenu onNavigate={navigateToInfoPage} />
       <div className="site-logo-wrap">
         <img src="/images/logo2.svg" alt="Eye Me Eye logo" className="site-logo" />
       </div>
@@ -684,6 +694,16 @@ export default function App() {
         </div>
       )}
 
+      {view === "faq" && (
+        <InfoPage title="FAQ" onBack={() => setView(previousView)} />
+      )}
+      {view === "howto" && (
+        <InfoPage title="How To" onBack={() => setView(previousView)} />
+      )}
+      {view === "about-us" && (
+        <InfoPage title="About Us" onBack={() => setView(previousView)} />
+      )}
+
       {view === "dashboard" && profile && (
         <Dashboard
           profile={profile}
@@ -708,6 +728,73 @@ export default function App() {
 }
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
+
+const LOREM_1 =
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
+const LOREM_2 =
+  "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt.";
+
+const LOREM_3 =
+  "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus.";
+
+interface HamburgerMenuProps {
+  onNavigate: (target: InfoView) => void;
+}
+
+function HamburgerMenu({ onNavigate }: HamburgerMenuProps) {
+  const [open, setOpen] = useState(false);
+
+  const go = (target: InfoView): void => {
+    onNavigate(target);
+    setOpen(false);
+  };
+
+  return (
+    <div className="hamburger-container">
+      <button
+        type="button"
+        className="hamburger-btn"
+        aria-label="Open menu"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <span />
+        <span />
+        <span />
+      </button>
+      {open && (
+        <>
+          <div className="hamburger-backdrop" onClick={() => setOpen(false)} />
+          <nav className="hamburger-nav" aria-label="Site menu">
+            <button type="button" onClick={() => go("faq")}>FAQ</button>
+            <button type="button" onClick={() => go("howto")}>How To</button>
+            <button type="button" onClick={() => go("about-us")}>About Us</button>
+          </nav>
+        </>
+      )}
+    </div>
+  );
+}
+
+interface InfoPageProps {
+  title: string;
+  onBack: () => void;
+}
+
+function InfoPage({ title, onBack }: InfoPageProps) {
+  return (
+    <div className="info-page">
+      <h2 className="section-title">{title}</h2>
+      <p>{LOREM_1}</p>
+      <p>{LOREM_2}</p>
+      <p>{LOREM_3}</p>
+      <button type="button" className="button button--ghost" onClick={onBack}>
+        ← Back
+      </button>
+    </div>
+  );
+}
 
 interface AuthCardProps {
   title: string;
