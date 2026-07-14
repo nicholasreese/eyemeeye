@@ -179,6 +179,10 @@
   font-size: 0.875rem;
 }
 
+.status-history .section-title {
+  font-size: 1.025rem;
+}
+
 .button {
   background: #2563eb;
   color: #fff;
