@@ -10,7 +10,7 @@
   display: flex;
   justify-content: center;
   margin-top: 2em;
-  margin-bottom: 0.3rem;
+  margin-bottom: calc(0.3rem - 2em);
 }
 
 .site-logo {
